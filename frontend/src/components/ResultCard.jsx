@@ -3,7 +3,13 @@ function ResultCard({ result }) {
 
     return (
         <div className="result">
-        {result}
+            <div className="result-header">
+                🌱 PlantPal AI
+            </div>
+
+            <div className="result-content">
+                {result}
+            </div>
         </div>
     );
 }

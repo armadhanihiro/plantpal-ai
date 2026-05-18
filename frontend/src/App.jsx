@@ -3,10 +3,11 @@ import { Send } from "lucide-react";
 
 import { askPlantAI } from "./services/aiService";
 
-import ResultCard from "./components/ResultCard";
-import UploadBox from "./components/UploadBox";
-import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import UploadBox from "./components/UploadBox";
+import SuggestionChips from "./components/SuggestionChips";
+import ResultCard from "./components/ResultCard";
 
 import "./App.css";
 
@@ -56,24 +57,23 @@ function App() {
                     )
                 }
 
+                <SuggestionChips setQuestion={setQuestion}/>
+
                 <textarea 
                     placeholder="Ask something about your plant..."
                     value={question}
                     onChange={(e)=>setQuestion(e.target.value)}
                 />
 
-                <button onClick={handleSubmit}>
+                <button onClick={handleSubmit} disabled={loading}>
                     <Send size={18}/>
-                    Ask PlantPal
+                    {loading
+                        ? "Thinking..."
+                        : "Ask PlantPal"
+                    }
                 </button>
 
-                <ResultCard 
-                    result={
-                        loading
-                        ? "PlantPal is thinking 🌱"
-                        : result
-                     }
-                />
+                <ResultCard result={result}/>
 
             </main>
 

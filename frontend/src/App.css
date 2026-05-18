@@ -80,6 +80,28 @@ body{
     border-radius:20px;
 }
 
+.chips{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:20px 0;
+}
+
+.chip{
+    background:#f3faf2;
+    border:1px solid #dce7db;
+    padding:5px 14px;
+    border-radius:999px;
+    font-size:14px;
+    color:#2f6b3f;
+    cursor:pointer;
+    width:auto;
+}
+
+.chip:hover{
+    background:#e7f5e5;
+}
+
 textarea{
     width:100%;
     margin-top:20px;
@@ -111,6 +133,11 @@ button{
     gap:10px;
 }
 
+button:disabled{
+    opacity:.7;
+    cursor:not-allowed;
+}
+
 .result{
     margin-top:20px;
     padding:18px;
@@ -119,5 +146,19 @@ button{
     border-left:5px solid #5f9f67;
     line-height:1.7;
     color:#214327;
+    white-space:pre-line;
+}
+
+.result-header{
+    font-weight:700;
+
+    margin-bottom:12px;
+
+    color:#2f6b3f;
+}
+
+.result-content{
+    line-height:1.8;
+
     white-space:pre-line;
 }
