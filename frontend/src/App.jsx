@@ -1,13 +1,19 @@
 import { useState } from "react";
-import { Leaf, Send } from "lucide-react";
-import { getPlantAdvice } from "./utils/plantAdvice";
+import { Send } from "lucide-react";
+
+import { askPlantAI } from "./services/aiService";
+
 import ResultCard from "./components/ResultCard";
 import UploadBox from "./components/UploadBox";
+import Hero from "./components/Hero";
+import Navbar from "./components/Navbar";
+
 import "./App.css";
 
 function App() {
     const [image, setImage] = useState(null);
     const [question, setQuestion] = useState("");
+    const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
     
     const handleImageUpload = (e) => {
@@ -20,28 +26,22 @@ function App() {
         }
     };
 
-    const handleSubmit = () => {
-        const advice = getPlantAdvice(question);
-        setResult(advice);
+    const handleSubmit = async () => {
+        if (!question.trim()) return;
+
+        setLoading(true);
+
+        const response = await askPlantAI(question);
+        setResult(response);
+
+        setLoading(false);
     };
 
     return (
         <div className="app">
-            <nav className="navbar">
-                <div className="logo">
-                <Leaf size={28}/>
-                <span>PlantPal AI</span>
-                </div>
-            </nav>
+            <Navbar />
 
-            <section className="hero">
-                <h1>Your AI Plant Care Assistant 🌱</h1>
-
-                <p>
-                Upload your plant photo and ask questions about
-                plant care, health, and recommendations.
-                </p>
-            </section>
+            <Hero />
 
             <main className="card">
 
@@ -67,7 +67,13 @@ function App() {
                     Ask PlantPal
                 </button>
 
-                <ResultCard result={result}/>
+                <ResultCard 
+                    result={
+                        loading
+                        ? "PlantPal is thinking 🌱"
+                        : result
+                     }
+                />
 
             </main>
 
