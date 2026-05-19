@@ -1,4 +1,4 @@
-function SuggestionChips({ setQuestion }) {
+function SuggestionChips({ setQuestion, textareaRef }) {
 
     const suggestions = [
         "Why are my leaves turning yellow?",
@@ -13,7 +13,10 @@ function SuggestionChips({ setQuestion }) {
                 <button
                     key={index}
                     className="chip"
-                    onClick={()=>setQuestion(item)}
+                    onClick={()=> {
+                        setQuestion(item);
+                        textareaRef.current.focus();
+                    }}
                 >
                     {item}
                 </button>
