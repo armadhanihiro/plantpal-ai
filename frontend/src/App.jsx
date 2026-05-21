@@ -1,88 +1,41 @@
-import { useState, useRef } from "react";
-import { Send } from "lucide-react";
-
-import { askPlantAI } from "./services/aiService";
+import {
+ BrowserRouter,
+ Routes,
+ Route
+}
+from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import UploadBox from "./components/UploadBox";
-import ImagePreview from "./components/ImagePreview";
-import SuggestionChips from "./components/SuggestionChips";
-import EmptyState from "./components/EmptyState";
-import ResultCard from "./components/ResultCard";
 
-import "./App.css";
+import Home from "./pages/Home";
+import CareGuide from "./pages/CareGuide";
+import About from "./pages/About";
 
-function App() {
-    const [image, setImage] = useState(null);
-    const [question, setQuestion] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState("");
-    const textareaRef = useRef(null);
-    
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
+function App(){
 
-        if(file){
-            setImage(
-                URL.createObjectURL(file)
-            );
-        }
-    };
+    return(
+        <BrowserRouter>
+            <Navbar/>
 
-    const handleSubmit = async () => {
-        if (!question.trim()) return;
-
-        setLoading(true);
-
-        const response = await askPlantAI(question);
-        setResult(response);
-
-        setLoading(false);
-    };
-
-    return (
-        <div className="app">
-            <Navbar />
-
-            <Hero />
-
-            <main className="card">
-
-                <UploadBox handleImageUpload={handleImageUpload}/>
-                
-                <ImagePreview image={image}/>
-
-                <SuggestionChips 
-                    setQuestion={setQuestion}
-                    textareaRef={textareaRef}
+            <Routes>
+                <Route
+                path="/"
+                element={<Home/>}
                 />
 
-                <textarea 
-                    ref={textareaRef}
-                    placeholder="Ask something about your plant..."
-                    value={question}
-                    onChange={(e)=>setQuestion(e.target.value)}
+                <Route
+                path="/guide"
+                element={<CareGuide/>}
                 />
 
-                <button onClick={handleSubmit} disabled={loading}>
-                    <Send size={18}/>
-                    {loading
-                        ? "Thinking..."
-                        : "Ask PlantPal"
-                    }
-                </button>
+                <Route
+                path="/about"
+                element={<About/>}
+                />
+            </Routes>
+        </BrowserRouter>
+    )
 
-                {
-                    !result && !loading &&
-                    <EmptyState/>
-                }
-                <ResultCard result={result}/>
-
-            </main>
-
-        </div>
-    );
 }
 
 export default App;

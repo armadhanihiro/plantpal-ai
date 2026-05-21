@@ -12,55 +12,82 @@ body{
     min-height:100vh;
 }
 
+/* NAVBAR */
+
 .navbar{
-    padding:20px 8%;
+    padding:1.25rem 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-links{
+    display:flex;
+    align-items: center;
+    gap:1.5rem;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#58705d;
+    font-weight:500;
+}
+
+.nav-links a:hover{
+    color:#2f6b3f;
 }
 
 .logo{
     display:flex;
     align-items:center;
-    gap:10px;
-    font-size:22px;
+    gap:.6rem;
+    font-size:1.4rem;
     font-weight:700;
     color:#2f6b3f;
 }
 
+/* HERO */
+
 .hero{
-    padding:50px 20px 30px;
+    padding:3rem 1.25rem 2rem;
     text-align:center;
 }
 
 .hero h1{
-    font-size: clamp(34px, 5vw, 56px);
-    margin-bottom: 12px;
+    font-size: clamp(2rem, 5vw, 4rem);
+    margin-bottom: .75rem;
     color:#173b22;
     line-height:1.1;
 }
 
 .hero p{
-    max-width:600px;
+    max-width:38rem;
     margin:auto;
     color:#5f6f61;
     line-height:1.6;
-    font-size:18px;
+    font-size:1.1rem;
 }
 
+/* MAIN CARD */
+
 .card{
-    width:min(90%,700px);
-    margin:30px auto;
-    padding:30px;
+    width:min(90%,44rem);
+    margin:2rem auto;
+    padding:2rem;
     background:#ffffff;
     border:1px solid #e6ece3;
     box-shadow: 0 20px 40px rgba(0,0,0,.06);
 }
 
+/* UPLOAD */
+
 .upload-box{
     border:2px dashed #a7c8aa;
-    padding:25px;
+    padding:1.5rem;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:5px;
+    gap:.5rem;
     border-radius:20px;
     cursor:pointer;
     transition: .3s;
@@ -72,17 +99,21 @@ body{
   border-color:#6cab75;
 }
 
+/* IMAGE */
+
 .preview{
     width:100%;
-    max-height:300px;
+    max-height:19rem;
     object-fit:cover;
-    margin-top:20px;
+    margin-top:1.25rem;
     border-radius:20px;
 }
 
+/* HEALTH CARD */
+
 .health-card{
-    margin-top:20px;
-    padding:20px;
+    margin-top:1.25rem;
+    padding:1.25rem;
     border-radius:20px;
     background:#f7fcf5;
     border:1px solid #dfe8dc;
@@ -90,19 +121,21 @@ body{
 }
 
 .score{
-    font-size:42px;
+    font-size:2.5rem;
     font-weight:700;
     color:#2f8b46;
-    margin:15px 0;
+    margin:1rem 0;
 }
 
 .health-status{
     color:#58705d;
 }
 
+/* PLANT CARD */
+
 .plant-card{
-    margin-top:20px;
-    padding:20px;
+    margin-top:1.25rem;
+    padding:1.25rem;
     background:white;
     border-radius:20px;
     border:1px solid #e3e9e1;
@@ -110,14 +143,14 @@ body{
 }
 
 .plant-card h3{
-    margin-bottom:15px;
+    margin-bottom:1rem;
     color:#2f6b3f;
 }
 
 .info-row{
     display:flex;
     justify-content:space-between;
-    padding:10px 0;
+    padding:.75rem 0;
     border-bottom:1px solid #edf2eb;
 }
 
@@ -126,19 +159,21 @@ body{
     color:#2f6b3f;
 }
 
+/* CHIPS */
+
 .chips{
     display:flex;
-    gap:10px;
+    gap:.75rem;
     flex-wrap:wrap;
-    margin:20px 0;
+    margin:1.25rem 0;
 }
 
 .chip{
     background:#f3faf2;
     border:1px solid #dce7db;
-    padding:5px 14px;
+    padding:.45rem .9rem;
     border-radius:999px;
-    font-size:14px;
+    font-size:.9rem;
     color:#2f6b3f;
     cursor:pointer;
     width:auto;
@@ -148,11 +183,13 @@ body{
     background:#e7f5e5;
 }
 
+/* INPUT */
+
 textarea{
     width:100%;
-    margin-top:20px;
-    padding:15px;
-    min-height:120px;
+    margin-top:1.25rem;
+    padding:1rem;
+    min-height:7.5rem;
     border-radius:15px;
     border:1px solid #ddd;
 }
@@ -163,10 +200,12 @@ textarea:focus{
     box-shadow: 0 0 0 4px rgba(91,159,109,.15);
 }
 
+/* BUTTON */
+
 button{
     width:100%;
-    margin-top:20px;
-    padding:16px;
+    margin-top:1.25rem;
+    padding:1rem;
     border:none;
     border-radius:15px;
     background:#2f6b3f;
@@ -176,7 +215,7 @@ button{
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:10px;
+    gap:.6rem;
 }
 
 button:disabled{
@@ -184,9 +223,11 @@ button:disabled{
     cursor:not-allowed;
 }
 
+/* EMPTY */
+
 .empty-state{
-    margin-top:20px;
-    padding:20px;
+    margin-top:1.25rem;
+    padding:1.25rem;
     background:#f8fcf7;
     border:1px solid #dfe8dc;
     border-radius:20px;
@@ -194,21 +235,23 @@ button:disabled{
 
 .empty-state h3{
     color:#2f6b3f;
-    margin-bottom:15px;
+    margin-bottom:1rem;
 }
 
 .empty-state ul{
-    padding-left:20px;
+    padding-left:1.25rem;
 }
 
 .empty-state li{
-    margin-bottom:10px;
+    margin-bottom:.6rem;
     color:#58705d;
 }
 
+/* RESULT */
+
 .result{
-    margin-top:20px;
-    padding:18px;
+    margin-top:1.25rem;
+    padding:1.25rem;
     border-radius:18px;
     background:#eef7ee;
     border-left:5px solid #5f9f67;
@@ -219,14 +262,48 @@ button:disabled{
 
 .result-header{
     font-weight:700;
-
-    margin-bottom:12px;
-
+    margin-bottom:.75rem;
     color:#2f6b3f;
 }
 
 .result-content{
     line-height:1.8;
-
     white-space:pre-line;
+}
+
+/* HISTORY */
+
+.history-card{
+    margin-top:1.25rem;
+    padding:1.25rem;
+    border-radius:20px;
+    background:#f8fcf7;
+    border:1px solid #dfe8dc;
+}
+
+.history-card h3{
+    color:#2f6b3f;
+    margin-bottom:1rem;
+}
+
+.history-item{
+    padding:.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #edf2eb;
+    color:#58705d;
+    transition: .3s;
+}
+
+.history-item:hover{
+    color: #2f6b3f;
+    padding-left: 1rem;
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    padding:2rem;
+    color:#7a8a7c;
+    font-size:.9rem;
 }
