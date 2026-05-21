@@ -4,11 +4,14 @@ PlantPal AI is a web application designed to help users care for plants through 
 
 ## Current Features
 
-- Upload plant images
-- Preview uploaded images
-- Ask plant-related questions
-- Display plant guidance responses
-- Responsive React UI
+- React single-page/multi-page layout
+- Plant image upload preview
+- Plant health score UI
+- Plant information card
+- Question suggestions
+- Recent question history with localStorage
+- Dark mode
+- Responsive navigation
 
 ## Tech Stack
 

@@ -2,10 +2,18 @@
     box-sizing:border-box;
 }
 
+html{
+    scroll-behavior:smooth;
+}
+
 body{
     margin:0;
     font-family:Inter,sans-serif;
     background:#f5f8f2;
+}
+
+body.dark-body{
+    background:#101a13;
 }
 
 .app{
@@ -27,14 +35,147 @@ body{
     gap:1.5rem;
 }
 
-.nav-links a{
+.nav-link{
     text-decoration:none;
     color:#58705d;
     font-weight:500;
+    position: relative;
+    padding-bottom: .3rem;
 }
 
-.nav-links a:hover{
+.nav-link:hover{
     color:#2f6b3f;
+}
+
+.nav-link.active-link{
+    color:#2f6b3f;
+    font-weight:700;
+}
+
+.nav-link.active-link::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: #2f6b3f;
+    border-radius: 999px;
+}
+
+.menu-btn{
+    display:none;
+    width:auto;
+    margin:0;
+    padding:.5rem;
+    background:none;
+    color:#2f6b3f;
+}
+
+.mode-btn{
+    width:auto;
+    margin:0;
+    padding:.5rem .8rem;
+    border-radius:999px;
+}
+
+/* DARK MODE */
+.dark{
+    background:#101a13;
+    color:#eaf3ea;
+    min-height:100vh;
+}
+
+.dark .navbar{
+    background:#101a13;
+}
+
+.dark .logo,
+.dark .hero h1,
+.dark .guide-page h1,
+.dark .about-page h1{
+    color:#eaf3ea;
+}
+
+.dark .hero p,
+.dark .guide-card p,
+.dark .about-intro,
+.dark .about-card p,
+.dark .about-card li,
+.dark .health-status,
+.dark .empty-state li,
+.dark .history-item{
+    color:#b8c8b8;
+}
+
+.dark .card,
+.dark .health-card,
+.dark .plant-card,
+.dark .empty-state,
+.dark .result,
+.dark .history-card,
+.dark .guide-card,
+.dark .about-card{
+    background:#18261c;
+    border-color:#2c3d30;
+    color:#eaf3ea;
+}
+
+.dark .upload-box,
+.dark .chip{
+    background:#142219;
+    border-color:#2c3d30;
+    color:#cfe5d0;
+}
+
+.dark .upload-box:hover,
+.dark .chip:hover{
+    background:#1d3123;
+}
+
+.dark textarea{
+    background:#142219;
+    color:#eaf3ea;
+    border-color:#2c3d30;
+}
+
+.dark textarea::placeholder{
+    color:#8fa08f;
+}
+
+.dark .nav-link{
+    color:#b8c8b8;
+}
+
+.dark .nav-link:hover,
+.dark .nav-link.active-link{
+    color:#8fd19e;
+}
+
+.dark .nav-link.active-link::after{
+    background:#8fd19e;
+}
+
+.dark .info-row{
+    border-bottom-color:#2c3d30;
+}
+
+.dark .info-row span:last-child,
+.dark .plant-card h3,
+.dark .empty-state h3,
+.dark .result-header,
+.dark .history-card h3,
+.dark .guide-card h3,
+.dark .about-card h3{
+    color:#8fd19e;
+}
+
+.dark .history-item{
+    border-bottom-color:#2c3d30;
+}
+
+.dark .footer{
+    color:#8fa08f;
 }
 
 .logo{
@@ -306,4 +447,166 @@ button:disabled{
     padding:2rem;
     color:#7a8a7c;
     font-size:.9rem;
+}
+
+/* CARE GUIDE */
+
+.guide-page{
+    width:min(90%,60rem);
+    margin:3rem auto;
+    text-align:center;
+}
+
+.guide-page h1{
+    color:#173b22;
+    margin-bottom:1rem;
+}
+
+.guide-grid{
+    display:grid;
+    grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(16rem,1fr)
+    );
+    gap:1.5rem;
+    margin-top:2rem;
+}
+
+.guide-card{
+    background:white;
+    padding:1.5rem;
+    border-radius:1.25rem;
+    border:1px solid #e6ece3;
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.04);
+    text-align:left;
+}
+
+.guide-card,
+.history-card{
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.guide-card:hover,
+.history-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+
+.guide-card h3{
+    color:#2f6b3f;
+    margin-bottom:.75rem;
+}
+
+.guide-card p{
+    color:#58705d;
+    line-height:1.7;
+}
+
+
+/* ABOUT */
+.about-page{
+    width:min(90%,50rem);
+    margin:3rem auto;
+    text-align:center;
+}
+
+.about-intro{
+    color:#58705d;
+    line-height:1.8;
+    margin-bottom:2rem;
+}
+
+.about-card{
+    background:white;
+    padding:1.5rem;
+    border-radius:1.25rem;
+    border:1px solid #e6ece3;
+    box-shadow:0 8px 20px rgba(0,0,0,.04);
+    margin-bottom:1.5rem;
+    text-align:left;
+}
+
+.about-card h3{
+    color:#2f6b3f;
+    margin-bottom:1rem;
+}
+
+.about-card li{
+    margin-bottom:.75rem;
+    color:#58705d;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px){
+
+    .menu-btn{
+        display:flex;
+    }
+
+    .nav-links{
+        display: none;
+        position: absolute;
+        top: 5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        padding: 1rem;
+        border-radius: 1rem;
+        background: white;
+        flex-direction: column;
+        box-shadow: 0 10px 30px rgba(0,0,0,.1);
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:1rem;
+    }
+
+    .nav-links.open{
+        display: flex;
+    }
+
+    .hero{
+        padding:2rem 1rem 1.5rem;
+    }
+
+    .hero p{
+        font-size:1rem;
+    }
+
+    .card{
+        width:92%;
+        padding:1.25rem;
+        margin:1.5rem auto;
+    }
+
+    .guide-page,
+    .about-page{
+        margin:2rem auto;
+    }
+}
+
+@media (max-width: 480px){
+
+    .info-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:.3rem;
+    }
+
+    .chip{
+        width:100%;
+        justify-content:center;
+    }
+
+    button{
+        font-size:.95rem;
+    }
+
+    .score{
+        font-size:2.2rem;
+    }
 }

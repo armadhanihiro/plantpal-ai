@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
 
 import { askPlantAI } from "../services/aiService";
@@ -15,12 +15,31 @@ import Footer from "../components/Footer";
 import "../App.css";
 
 function Home() {
-   const [image, setImage] = useState(null);
+    const [image, setImage] = useState(null);
     const [question, setQuestion] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
     const textareaRef = useRef(null);
-    const [history, setHistory] = useState([])
+
+    const [history, setHistory] = useState(()=>{
+        const saved =
+            localStorage.getItem(
+                "plantpal-history"
+            );
+
+        return saved
+            ? JSON.parse(saved)
+            : [];
+    });
+
+    useEffect(()=>{
+
+        localStorage.setItem(
+            "plantpal-history",
+            JSON.stringify(history)
+        );
+
+    },[history]);
     
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -39,10 +58,7 @@ function Home() {
 
         const response = await askPlantAI(question);
         setResult(response);
-        setHistory((prev) => [
-            question,
-            ...prev
-        ])
+        setHistory(prev => [question, ...prev].slice(0,10))
 
         setLoading(false);
     };
