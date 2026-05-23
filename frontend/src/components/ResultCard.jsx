@@ -1,3 +1,5 @@
+import ReactMarkdown from "react-markdown";
+
 function ResultCard({ result }) {
     if (!result) return null;
 
@@ -8,7 +10,7 @@ function ResultCard({ result }) {
             </div>
 
             <div className="result-content">
-                {result}
+                <ReactMarkdown>{result}</ReactMarkdown>
             </div>
         </div>
     );

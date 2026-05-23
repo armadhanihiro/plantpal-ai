@@ -195,7 +195,7 @@ body.dark-body{
 }
 
 .hero h1{
-    font-size: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
     margin-bottom: .75rem;
     color:#173b22;
     line-height:1.1;
@@ -330,7 +330,7 @@ textarea{
     width:100%;
     margin-top:1.25rem;
     padding:1rem;
-    min-height:7.5rem;
+    min-height:6rem;
     border-radius:15px;
     border:1px solid #ddd;
 }
@@ -346,7 +346,7 @@ textarea:focus{
 button{
     width:100%;
     margin-top:1.25rem;
-    padding:1rem;
+    padding:.9rem;
     border:none;
     border-radius:15px;
     background:#2f6b3f;
@@ -410,6 +410,19 @@ button:disabled{
 .result-content{
     line-height:1.8;
     white-space:pre-line;
+}
+
+.result-content ul{
+    padding-left:1.2rem;
+    margin: 0;
+}
+
+.result-content li{
+    line-height:1;
+}
+
+.result-content p{
+    margin:0;
 }
 
 /* HISTORY */
