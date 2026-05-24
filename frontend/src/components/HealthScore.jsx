@@ -1,14 +1,10 @@
-import { useState } from 'react'
-
-function HealthScore() {
-    const [score] = useState( () => 
-        Math.floor(Math.random()*21)+80
-    );
+function HealthScore({ score }) {
     return (
         <div className="health-card">
             <h3>Plant Health Score</h3>
+
             <div className="score">
-                {score}%
+                {score || 0}%
             </div>
 
             <p className="health-status">

@@ -1,8 +1,7 @@
 import PlantInfoCard from "./PlantInfoCard";
 import HealthScore from './HealthScore'
 
-function ImagePreview({ image }) {
-
+function ImagePreview({ image, plantData }) {
     if(!image) return null;
 
     return(
@@ -12,8 +11,20 @@ function ImagePreview({ image }) {
                 alt="Plant preview"
                 className="preview"
             />
-            <HealthScore />
-            <PlantInfoCard/>
+            {
+                plantData && (
+                    <>
+                        <HealthScore score={plantData.healthScore}/>
+
+                        <PlantInfoCard
+                            plantName={plantData.plantName}
+                            watering={plantData.watering}
+                            sunlight={plantData.sunlight}
+                            difficulty={plantData.difficulty}
+                        />
+                    </>
+                )
+            }
         </>
     )
 }

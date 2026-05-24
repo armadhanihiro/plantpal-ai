@@ -17,6 +17,7 @@ import "../App.css";
 function Home() {
     const [image, setImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
+    const [plantData, setPlantData] = useState(null);
     const [question, setQuestion] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
@@ -60,7 +61,19 @@ function Home() {
         setLoading(true);
 
         const response = await askPlantAI(question, imageFile);
-        setResult(response);
+        setResult(response.answer);
+
+        setPlantData(
+            {
+                healthScore: response.healthScore,
+                plantName: response.plantName,
+                watering: response.watering,
+                sunlight: response.sunlight,
+                difficulty: response.difficulty
+
+            }
+        );
+
         setHistory(prev => [question, ...prev].slice(0,10))
 
         setLoading(false);
@@ -75,7 +88,7 @@ function Home() {
 
                 <UploadBox handleImageUpload={handleImageUpload}/>
                 
-                <ImagePreview image={image}/>
+                <ImagePreview image={image} plantData={plantData}/>
 
                 <SuggestionChips 
                     setQuestion={setQuestion}

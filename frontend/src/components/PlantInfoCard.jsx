@@ -1,27 +1,38 @@
-function PlantInfoCard() {
+function PlantInfoCard({plantName, watering, sunlight, difficulty}) {
     return (
         <div className="plant-card">
-
             <h3>🌿 Plant Information</h3>
 
             <div className="info-row">
                 <span>Name</span>
-                <span>Unknown Plant</span>
+
+                <span>
+                    {plantName || "Unknown Plant"}
+                </span>
             </div>
 
             <div className="info-row">
                 <span>Watering</span>
-                <span>💧💧 Medium</span>
+
+                <span>
+                    {watering || "Medium"}
+                </span>
             </div>
 
             <div className="info-row">
                 <span>Sunlight</span>
-                <span>☀️ Indirect</span>
+
+                <span>
+                    {sunlight || "Indirect"}
+                </span>
             </div>
 
             <div className="info-row">
                 <span>Difficulty</span>
-                <span>Easy</span>
+
+                <span>
+                    {difficulty || "Easy"}
+                </span>
             </div>
 
         </div>

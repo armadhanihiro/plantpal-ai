@@ -52,6 +52,17 @@ export async function askPlantAI(question, imageFile){
             - If the question is unclear, ask for more details.
             - Keep the tone friendly and supportive.
 
+            Return ONLY valid JSON.
+
+            Format:
+            {
+                "answer":"...",
+                "healthScore":85,
+                "plantName":"identify the most likely plant name from the image, or 'Unknown Plant' only if you cannot identify it",
+                "watering":"Low/Medium/High",
+                "sunlight":"...",
+                "difficulty":"Easy/Medium/Hard"
+            }
             User question:
             ${question}
             `;
@@ -73,7 +84,9 @@ export async function askPlantAI(question, imageFile){
                 },
             ],
         });
-        return result.response.text();
+        const text = result.response.text();
+        const cleanedText = text.replace(/```json/g,"").replace(/```/g,"").trim();
+        return JSON.parse(cleanedText);
     }catch(error){
         console.error(error);
         return "PlantPal AI encountered an error. Please try again.";
