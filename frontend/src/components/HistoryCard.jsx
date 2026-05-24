@@ -1,27 +1,22 @@
-function HistoryCard({ history, setQuestion }) {
+function HistoryCard({ history, setQuestion, textareaRef }) {
 
     if(history.length===0)
         return null;
 
     return (
         <div className="history-card">
-
-            <h3>
-                Recent Questions
-            </h3>
+            <h3>Recent Questions</h3>
 
             {
-                history
-                .slice(0,3)
-                .map((item,index)=>(
+                history.slice(0,3).map((item,index)=>(
                     <div
                         key={index}
                         className="history-item"
-                        onClick={()=>
+                        onClick={()=> {
                             setQuestion(item)
-                        }
-                    >
-                    • {item}
+                            textareaRef.current?.focus();
+                        }}
+                    >•{item}
                     </div>
                 ))
             }

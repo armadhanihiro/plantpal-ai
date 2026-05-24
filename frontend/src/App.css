@@ -178,6 +178,17 @@ body.dark-body{
     color:#8fa08f;
 }
 
+/* DARK THINKING */
+
+.dark .thinking{
+    background:#18261c;
+    border-color:#2c3d30;
+}
+
+.dark .thinking p{
+    color:#8fd19e;
+}
+
 .logo{
     display:flex;
     align-items:center;
@@ -423,6 +434,56 @@ button:disabled{
 
 .result-content p{
     margin:0;
+}
+
+/* THINKING */
+
+.thinking{
+    margin-top:1.5rem;
+    padding:1.5rem;
+    border-radius:1.25rem;
+    background:#eef7ee;
+    border:1px solid #dfe8dc;
+    text-align:center;
+}
+
+.thinking p{
+    margin-top:1rem;
+    color:#2f6b3f;
+    font-weight:600;
+}
+
+.thinking-dots{
+    display:flex;
+    justify-content:center;
+    gap:.5rem;
+}
+
+.thinking-dots span{
+    width:.7rem;
+    height:.7rem;
+    border-radius:999px;
+    background:#5f9f67;
+    animation:
+    bounce 1s infinite ease-in-out;
+}
+
+.thinking-dots span:nth-child(2){
+    animation-delay:.2s;
+}
+
+.thinking-dots span:nth-child(3){
+    animation-delay:.4s;
+}
+
+@keyframes bounce{
+    0%,80%,100%{
+        transform:scale(0);
+    }
+
+    40%{
+        transform:scale(1);
+    }
 }
 
 /* HISTORY */

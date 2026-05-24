@@ -16,6 +16,7 @@ import "../App.css";
 
 function Home() {
     const [image, setImage] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
     const [question, setQuestion] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
@@ -48,6 +49,8 @@ function Home() {
             setImage(
                 URL.createObjectURL(file)
             );
+
+            setImageFile(file)
         }
     };
 
@@ -56,7 +59,7 @@ function Home() {
 
         setLoading(true);
 
-        const response = await askPlantAI(question);
+        const response = await askPlantAI(question, imageFile);
         setResult(response);
         setHistory(prev => [question, ...prev].slice(0,10))
 
@@ -88,19 +91,34 @@ function Home() {
 
                 <button onClick={handleSubmit} disabled={loading}>
                     <Send size={18}/>
-                    {loading
-                        ? "Thinking..."
-                        : "Ask PlantPal"
-                    }
+                    Ask PlantPal
                 </button>
 
                 {
                     !result && !loading &&
                     <EmptyState/>
                 }
-                <ResultCard result={result}/>
+                {
+                    loading ? (
+                        <div className="thinking">
+                            <div className="thinking-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
 
-                <HistoryCard history={history}/>
+                            <p>🌱 PlantPal is thinking...</p>
+                        </div>
+                    ) : (
+                        <ResultCard result={result}/>
+                    )
+                }
+
+                <HistoryCard 
+                    history={history}
+                    setQuestion={setQuestion}
+                    textareaRef={textareaRef}
+                />
 
             </main>
 
