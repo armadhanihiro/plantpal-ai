@@ -11,7 +11,7 @@ async function fileToBase64(file) {
 }
 
 
-export async function askPlantAI(question, imageFile){
+export async function askPlantAI(question, imageFile, conversationId){
     try{
         let imageBase64 = null;
         let mimeType = null;
@@ -32,7 +32,8 @@ export async function askPlantAI(question, imageFile){
                 body:JSON.stringify({
                     question,
                     imageBase64,
-                    mimeType
+                    mimeType,
+                    conversationId
                 })
             }
         );
@@ -49,5 +50,17 @@ export async function askPlantAI(question, imageFile){
             sunlight:"Unknown",
             difficulty:"Unknown"
         };
+    }
+}
+
+export async function getPlantHistory(){
+    try{
+        const response = await fetch(
+            "http://localhost:5000/api/history"
+        );
+        return await response.json();
+    } catch(error){
+        console.error(error);
+        return [];
     }
 }

@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
 
-import { askPlantAI } from "../services/aiService";
+import { askPlantAI, getPlantHistory } from "../services/aiService";
 
 import Hero from "../components/Hero";
 import UploadBox from "../components/UploadBox";
 import ImagePreview from "../components/ImagePreview";
 import SuggestionChips from "../components/SuggestionChips";
 import EmptyState from "../components/EmptyState";
-import ResultCard from "../components/ResultCard";
 import HistoryCard from '../components/HistoryCard'
+import ChatMessages from "../components/ChatMessages";
 import Footer from "../components/Footer";
 
 import "../App.css";
@@ -22,26 +22,19 @@ function Home() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
     const textareaRef = useRef(null);
+    const [conversationId, setConversationId] = useState(null);
+    const [messages,setMessages] = useState([]);
 
-    const [history, setHistory] = useState(()=>{
-        const saved =
-            localStorage.getItem(
-                "plantpal-history"
-            );
+    const [history, setHistory] = useState([]);
 
-        return saved
-            ? JSON.parse(saved)
-            : [];
-    });
 
     useEffect(()=>{
-
-        localStorage.setItem(
-            "plantpal-history",
-            JSON.stringify(history)
-        );
-
-    },[history]);
+        async function fetchHistory(){
+            const data = await getPlantHistory();
+            setHistory(data);
+        }
+        fetchHistory();
+    },[]);
     
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -60,8 +53,27 @@ function Home() {
 
         setLoading(true);
 
-        const response = await askPlantAI(question, imageFile);
+        const userMessage = {
+            role:"user", 
+            content:question
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+
+        setQuestion("");
+
+        const response = await askPlantAI(question, imageFile, conversationId);
+        setConversationId(response.conversationId);
+
+        const assistantMessage = {
+            role:"assistant",
+            content:response.answer
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
+
         setResult(response.answer);
+
 
         setPlantData(
             {
@@ -74,7 +86,8 @@ function Home() {
             }
         );
 
-        setHistory(prev => [question, ...prev].slice(0,10))
+        const updatedHistory = await getPlantHistory();
+        setHistory(updatedHistory);
 
         setLoading(false);
     };
@@ -90,10 +103,40 @@ function Home() {
                 
                 <ImagePreview image={image} plantData={plantData}/>
 
-                <SuggestionChips 
-                    setQuestion={setQuestion}
-                    textareaRef={textareaRef}
-                />
+                {
+                    messages.length === 0 && !loading && !result && (
+                        <EmptyState />
+                    )
+                }
+
+                {
+                    messages.length === 0 && (
+                        <SuggestionChips 
+                            setQuestion={setQuestion}
+                            textareaRef={textareaRef}
+                        />
+                    )
+                }
+
+                {
+                    messages.length > 0 && (
+                        <ChatMessages messages={messages} />
+                    )
+                }
+
+                {
+                    loading && (
+                        <div className="thinking">
+                            <div className="thinking-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+
+                            <p>🌱 PlantPal is thinking...</p>
+                        </div>
+                    )
+                }
 
                 <textarea 
                     ref={textareaRef}
@@ -110,21 +153,6 @@ function Home() {
                 {
                     !result && !loading &&
                     <EmptyState/>
-                }
-                {
-                    loading ? (
-                        <div className="thinking">
-                            <div className="thinking-dots">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-
-                            <p>🌱 PlantPal is thinking...</p>
-                        </div>
-                    ) : (
-                        <ResultCard result={result}/>
-                    )
                 }
 
                 <HistoryCard 

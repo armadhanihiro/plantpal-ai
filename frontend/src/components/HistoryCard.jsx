@@ -6,19 +6,26 @@ function HistoryCard({ history, setQuestion, textareaRef }) {
     return (
         <div className="history-card">
             <h3>Recent Questions</h3>
-
             {
-                history.slice(0,3).map((item,index)=>(
-                    <div
-                        key={index}
-                        className="history-item"
-                        onClick={()=> {
-                            setQuestion(item)
-                            textareaRef.current?.focus();
-                        }}
-                    >•{item}
-                    </div>
-                ))
+                history.map( (item,index)=>(
+                        <div key={index} className= "history-item" onClick={()=>{
+                                setQuestion(
+                                    item.answer
+                                );
+                                textareaRef.current ?.focus();
+                            }}
+                        >
+                            <strong>
+                                {item.plant_name}
+                            </strong>
+
+                            <p>
+                                {item.answer ?.slice(0,60)}
+                                ...
+                            </p>
+                        </div>
+                    )
+                )
             }
         </div>
     );

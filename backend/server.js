@@ -29,7 +29,32 @@ app.get("/", (req, res) => {
 
 app.post("/api/analyze", async (req, res) => {
     try {
-        const { question, imageBase64, mimeType } = req.body;
+        const { question, imageBase64, mimeType, conversationId } = req.body;
+        let activeConversationId = conversationId;
+        if(!activeConversationId){
+            const {data:newConversation, error:conversationError} = await supabase.from("conversations").insert([
+                {
+                    title: question.slice(0,30)
+                }
+            ]).select().single();
+
+            if (conversationError) {
+                console.error("Conversation insert error:", conversationError);
+                return res.status(500).json({
+                    error: "Failed to create conversation"
+                });
+            }
+                activeConversationId = newConversation.id;
+        }
+
+        await supabase.from("messages").insert([
+            {
+                conversation_id: activeConversationId,
+                role:"user",
+                content:question
+            }
+        ]);
+
         const prompt = `
             You are PlantPal AI, a friendly plant care assistant.
 
@@ -76,14 +101,41 @@ app.post("/api/analyze", async (req, res) => {
             });
         }
 
-        const result = await model.generateContent({
-            contents: [
+        const {data:previousMessages} = await supabase.from("messages").select("*").eq("conversation_id", activeConversationId).order(
+            "created_at",
+            {
+                ascending:true
+            }
+        );
+
+        const chatHistory =previousMessages.map((msg)=>({
+            role:
+                msg.role ==="assistant" ? "model" : "user",
+            parts:[
                 {
-                    role: "user",
-                    parts,
-                },
-            ],
-        });
+                    text:
+                    msg.content
+                }
+            ]
+        }));
+
+        const chat = model.startChat({history:chatHistory});
+        const messageParts = [
+            {
+                text:prompt
+            }
+        ];
+
+        if(imageBase64 && mimeType){
+            messageParts.push({
+                inlineData:{
+                    data:imageBase64,
+                    mimeType
+                }
+            });
+        }
+
+        const result = await chat.sendMessage(messageParts);
 
         const text = result.response.text();
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
@@ -106,7 +158,7 @@ app.post("/api/analyze", async (req, res) => {
             console.log("Saved to Supabase:", data);
         }
 
-        res.json(parsed);
+        res.json({...parsed, conversationId:activeConversationId});
     } catch (error) {
             console.error(error);
             res.status(500).json(
@@ -116,6 +168,31 @@ app.post("/api/analyze", async (req, res) => {
             );
     }
 });
+
+app.get("/api/history", async(req,res)=>{
+        try{
+            const { data,error } = await supabase.from("plant_scans").select("*").order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            ).limit(10);
+
+            if(error){
+                console.error(error);
+                return res.status(500).json({
+                    error:error.message
+                });
+            }
+            res.json(data);
+        }catch(error){
+            console.error(error);
+            res.status(500).json({
+                error: "Failed to fetch history"
+            });
+        }
+    }
+);
 
 app.listen(PORT, () => {
     console.log(`PlantPal backend running on port ${PORT}`);
