@@ -138,8 +138,28 @@ app.post("/api/analyze", async (req, res) => {
         const result = await chat.sendMessage(messageParts);
 
         const text = result.response.text();
+
+        console.log("RAW GEMINI RESPONSE:", text);
+
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-        const parsed = JSON.parse(cleanedText);
+        
+        let parsed;
+
+        try {
+            parsed = JSON.parse(cleanedText);
+        } catch (parseError) {
+            console.error("JSON parse error:", parseError);
+            console.error("Raw text:", text);
+
+            parsed = {
+                answer: text,
+                healthScore: 0,
+                plantName: "Unknown Plant",
+                watering: "Unknown",
+                sunlight: "Unknown",
+                difficulty: "Unknown"
+            };
+        }
         const { data, error } = await supabase.from("plant_scans").insert([
             {
                 plant_name: parsed.plantName,
