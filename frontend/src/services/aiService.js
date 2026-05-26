@@ -22,7 +22,7 @@ export async function askPlantAI(question, imageFile, conversationId){
         }
 
         const response = await fetch(
-            "http://localhost:5000/api/analyze",
+            `${import.meta.env.VITE_API_URL}/api/analyze`,
             {
                 method:"POST",
                 headers:{
@@ -56,7 +56,7 @@ export async function askPlantAI(question, imageFile, conversationId){
 export async function getPlantHistory(){
     try{
         const response = await fetch(
-            "http://localhost:5000/api/history"
+            `${import.meta.env.VITE_API_URL}/api/history`
         );
         return await response.json();
     } catch(error){
