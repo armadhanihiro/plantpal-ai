@@ -1,11 +1,10 @@
 import { Leaf } from "lucide-react";
 
-function ConversationSidebar({conversations, activeConversationId, onSelectConversation, onNewChat}) {
-    
-    console.log(conversations);
+function ConversationSidebar({conversations, activeConversationId, onSelectConversation, onNewChat, 
+    onDeleteConversation, sidebarOpen, setSidebarOpen}) {
     
     return (
-        <aside className="conversation-sidebar">
+        <aside className={sidebarOpen ? "conversation-sidebar sidebar-open" : "conversation-sidebar"}>
 
             <div className="sidebar-brand">
                 <Leaf size={34} className="sidebar-logo"/>
@@ -17,7 +16,10 @@ function ConversationSidebar({conversations, activeConversationId, onSelectConve
 
             <button
                 className="new-chat-btn"
-                onClick={onNewChat}
+                onClick={() => {
+                    onNewChat();
+                    setSidebarOpen(false);
+                }}
             >
                 + New Chat
             </button>
@@ -32,17 +34,21 @@ function ConversationSidebar({conversations, activeConversationId, onSelectConve
                         </p>
                     ) : (
                         conversations.map((item) => (
-                            <button
-                                key={item.id}
-                                className={
-                                    item.id === activeConversationId
-                                        ? "conversation-item active-conversation"
-                                        : "conversation-item"
-                                }
-                                onClick={() => onSelectConversation(item.id)}
-                            >
-                                {item.title || "Untitled Plant Chat"}
-                            </button>
+                            <div key={item.id} className={item.id === activeConversationId ? "conversation-row active-conversation" : "conversation-row"}>
+                                <button className="conversation-item" onClick={() => {
+                                        onSelectConversation(item.id);
+                                        setSidebarOpen(false);
+                                }}>
+                                    {item.title || "Untitled Plant Chat"}
+                                </button>
+
+                                <button className="delete-conversation-btn" onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDeleteConversation(item.id);
+                                }}>
+                                    ...
+                                </button>
+                            </div>
                         ))
                     )
                 }

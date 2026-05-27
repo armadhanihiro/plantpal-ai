@@ -13,23 +13,12 @@ import Footer from "../components/Footer";
 
 import "../App.css";
 
-function Home({conversationId, setConversationId, messages, setMessages, refreshConversations, resetKey, plantData, setPlantData}) {
-    const [image, setImage] = useState(null);
+function Home({conversationId, setConversationId, messages, setMessages, refreshConversations, plantData, setPlantData, image, setImage}) {
     const [imageFile, setImageFile] = useState(null);
     const [question, setQuestion] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
     const textareaRef = useRef(null);
-
-
-    useEffect(() => {
-        setImage(null);
-        setImageFile(null);
-        setPlantData(null);
-        setQuestion("");
-        setLoading(false);
-        setResult("");
-    }, [resetKey]);
     
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -82,6 +71,10 @@ function Home({conversationId, setConversationId, messages, setMessages, refresh
 
             }
         );
+
+        if(response.imageUrl){
+            setImage(response.imageUrl);
+        }
 
         setLoading(false);
     };

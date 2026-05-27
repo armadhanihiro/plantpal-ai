@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import CareGuide from "./pages/CareGuide";
 import About from "./pages/About";
 
-import {getConversations, getMessages, getConversationPlant} from "./services/aiService";
+import {getConversations, getMessages, getConversationPlant, deleteConversation} from "./services/aiService";
 
 function App(){
 
@@ -22,11 +22,12 @@ function App(){
 
     });
 
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [conversations, setConversations] = useState([]);
     const [conversationId, setConversationId] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [resetKey, setResetKey] = useState(0);
     const [plantData, setPlantData] = useState(null);
+    const [image, setImage] = useState(null);
 
     useEffect(()=>{
         localStorage.setItem(
@@ -58,6 +59,7 @@ function App(){
         setMessages(formattedMessages);
 
         const plant = await getConversationPlant(id);
+        // console.log("RESTORED PLANT:", plant);
 
         if(plant){
             setPlantData({
@@ -67,16 +69,30 @@ function App(){
                 sunlight: plant.sunlight,
                 difficulty: plant.difficulty
             });
+
+            setImage(plant.image_url || null);
         }else {
             setPlantData(null);
+            setImage(null)
         }
-        setResetKey(prev => prev + 1);
     };
 
     const handleNewChat = () => {
         setConversationId(null);
         setMessages([]);
-        setResetKey(prev => prev + 1);
+        setPlantData(null);
+        setImage(null);
+    };
+
+    const handleDeleteConversation = async (id) => {await deleteConversation(id);
+        if (id === conversationId) {
+            setConversationId(null);
+            setMessages([]);
+            setPlantData(null);
+            setImage(null);
+        }
+ 
+        await refreshConversations();
     };
 
 
@@ -84,12 +100,23 @@ function App(){
         <BrowserRouter>
             <div className="app-layout">
 
+                <button className="sidebar-toggle" onClick={() => setSidebarOpen(prev => !prev)}>☰</button>
+
                 <ConversationSidebar
                     conversations={conversations}
                     activeConversationId={conversationId}
                     onSelectConversation={handleSelectConversation}
                     onNewChat={handleNewChat}
+                    onDeleteConversation={handleDeleteConversation}
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
                 />
+
+                {
+                    sidebarOpen && (
+                        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}/>
+                    )
+                }
 
                 <div className={darkMode ? "app dark" : "app"}>
                     <Navbar
@@ -107,9 +134,10 @@ function App(){
                                     messages={messages}
                                     setMessages={setMessages}
                                     refreshConversations={refreshConversations}
-                                    resetKey={resetKey}
                                     plantData={plantData}
                                     setPlantData={setPlantData}
+                                    image={image}
+                                    setImage={setImage}
                                 />
                             }
                         />

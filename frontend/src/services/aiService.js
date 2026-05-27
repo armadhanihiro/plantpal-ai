@@ -91,13 +91,32 @@ export async function getMessages(conversationId) {
     }
 }
 
-export async function getConversationPlant(){
+export async function getConversationPlant(conversationId){
     try{
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/conversation-plant`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/conversation-plant/${conversationId}`);
+
+        if (!response.ok) {
+            return null;
+        }
         return await response.json();
     }catch(error){
         console.error(error);
         return null;
     }
+}
 
+export async function deleteConversation(conversationId) {
+    try {
+        const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/conversations/${conversationId}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }

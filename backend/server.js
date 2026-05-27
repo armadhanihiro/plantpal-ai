@@ -90,17 +90,6 @@ app.post("/api/analyze", async (req, res) => {
             `
         ;
 
-        const parts = [{ text: prompt }];
-
-        if (imageBase64 && mimeType) {
-            parts.push({
-                inlineData: {
-                    data: imageBase64,
-                    mimeType,
-                },
-            });
-        }
-
         const {data:previousMessages} = await supabase.from("messages").select("*").eq("conversation_id", activeConversationId).order(
             "created_at",
             {
@@ -133,6 +122,25 @@ app.post("/api/analyze", async (req, res) => {
                     mimeType
                 }
             });
+        }
+
+        let imageUrl = null;
+
+        if(imageBase64 && mimeType){
+            console.log("Has image:", !!imageBase64);
+            console.log("Mime type:", mimeType);
+
+            const buffer = Buffer.from(imageBase64, "base64");
+            const fileName = `${Date.now()}.png`;
+            const { error: uploadError } = await supabase.storage.from("plant-images").upload(fileName,buffer, {contentType: mimeType});
+
+            if(uploadError){
+                console.error("Image upload error:", uploadError);
+            } else {
+                const { data: urlData } = supabase.storage.from("plant-images").getPublicUrl(fileName);
+                imageUrl = urlData.publicUrl;
+                console.log("Image URL:", imageUrl);
+            }
         }
 
         let text = "";
@@ -178,14 +186,15 @@ app.post("/api/analyze", async (req, res) => {
         }
         const { data, error } = await supabase.from("plant_scans").insert([
             {
+                conversation_id: activeConversationId,
                 plant_name: parsed.plantName,
                 health_score: parsed.healthScore,
                 watering: parsed.watering,
                 sunlight: parsed.sunlight,
                 difficulty: parsed.difficulty,
-                answer: parsed.answer
+                answer: parsed.answer,
+                image_url: imageUrl
             }
-
         ]).select();
 
         if (error) {
@@ -194,7 +203,7 @@ app.post("/api/analyze", async (req, res) => {
             console.log("Saved to Supabase:", data);
         }
 
-        res.json({...parsed, conversationId:activeConversationId});
+        res.json({...parsed, imageUrl, conversationId:activeConversationId});
     } catch (error) {
             console.error(error);
             res.status(500).json(
@@ -267,12 +276,16 @@ app.get("/api/messages/:id", async (req, res) => {
 
 app.get("/api/conversation-plant/:id", async(req,res)=>{
     try{
-        const {data, error} = await supabase.from("plant_scans").select("*").order("created_at", {ascending:false}).limit(1).single();
+        const { id } = req.params;
+        const {data, error} = await supabase.from("plant_scans").select("*").eq("conversation_id", id).order(
+            "created_at",
+            {
+                ascending:false
+            }
+        ).limit(1).single();
 
         if(error){
-            return res.status(500).json({
-                error:error.message
-            });
+            return res.status(404).json(null);
         }
         res.json(data);
     }catch(error){
@@ -281,9 +294,28 @@ app.get("/api/conversation-plant/:id", async(req,res)=>{
             error:"Failed to fetch plant data"
         });
     }
-}
+});
 
-);
+app.delete("/api/conversations/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { error } = await supabase.from("conversations").delete().eq("id", id);
+
+        if (error) {
+            return res.status(500).json({error: error.message});
+        }
+
+        res.json({
+            message: "Conversation deleted successfully"
+        });
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            error: "Failed to delete conversation"
+        });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`PlantPal backend running on port ${PORT}`);
