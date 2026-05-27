@@ -1,4 +1,4 @@
-import { Menu, X, Leaf } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
@@ -6,11 +6,6 @@ function Navbar({darkMode, setDarkMode}) {
     const [menuOpen,setMenuOpen] = useState(false);
     return (
         <nav className="navbar">
-            <div className="logo">
-                <Leaf size={28}/>
-                <span>PlantPal AI</span>
-            </div>
-
 
             <button className="menu-btn" onClick={()=> setMenuOpen(!menuOpen)}>
                 {

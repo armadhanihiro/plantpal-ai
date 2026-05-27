@@ -64,3 +64,40 @@ export async function getPlantHistory(){
         return [];
     }
 }
+
+export async function getConversations() {
+    try {
+        const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/conversations`
+        );
+
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+export async function getMessages(conversationId) {
+    try {
+        const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/messages/${conversationId}`
+        );
+
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+export async function getConversationPlant(){
+    try{
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/conversation-plant`);
+        return await response.json();
+    }catch(error){
+        console.error(error);
+        return null;
+    }
+
+}

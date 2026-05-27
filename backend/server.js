@@ -34,7 +34,7 @@ app.post("/api/analyze", async (req, res) => {
         if(!activeConversationId){
             const {data:newConversation, error:conversationError} = await supabase.from("conversations").insert([
                 {
-                    title: question.slice(0,30)
+                    title : question.length > 40 ? question.slice(0,40) + "..." : question
                 }
             ]).select().single();
 
@@ -135,9 +135,25 @@ app.post("/api/analyze", async (req, res) => {
             });
         }
 
-        const result = await chat.sendMessage(messageParts);
+        let text = "";
+        try{
+            const result = await chat.sendMessage(messageParts);
+            text = result.response.text();
 
-        const text = result.response.text();
+        } catch(aiError){
+            console.error(
+                "Gemini Error:",
+                aiError
+            );
+            return res.status(500).json({
+                answer: "PlantPal AI is currently busy 🌱 Please try again in a moment.",
+                healthScore:0,
+                plantName: "Unknown Plant",
+                watering: "Unknown",
+                sunlight: "Unknown",
+                difficulty: "Unknown"
+            });
+        }
 
         console.log("RAW GEMINI RESPONSE:", text);
 
@@ -212,6 +228,61 @@ app.get("/api/history", async(req,res)=>{
             });
         }
     }
+);
+
+app.get("/api/conversations", async (req, res) => {
+    try {
+        const { data, error } = await supabase.from("conversations").select("*").order("created_at", { ascending: false });
+        if (error) {
+            return res.status(500).json({
+                error: error.message,
+            });
+        }
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Failed to fetch conversations",
+        });
+    }
+});
+
+app.get("/api/messages/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { data, error } = await supabase.from("messages").select("*").eq("conversation_id", id).order("created_at", { ascending: true });
+        if (error) {
+            return res.status(500).json({
+                error: error.message,
+            });
+        }
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Failed to fetch messages",
+        });
+    }
+});
+
+app.get("/api/conversation-plant/:id", async(req,res)=>{
+    try{
+        const {data, error} = await supabase.from("plant_scans").select("*").order("created_at", {ascending:false}).limit(1).single();
+
+        if(error){
+            return res.status(500).json({
+                error:error.message
+            });
+        }
+        res.json(data);
+    }catch(error){
+        console.error(error);
+        res.status(500).json({
+            error:"Failed to fetch plant data"
+        });
+    }
+}
+
 );
 
 app.listen(PORT, () => {
