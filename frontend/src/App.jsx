@@ -107,6 +107,12 @@ function App(){
 
                 <button className="sidebar-toggle" onClick={() => setSidebarOpen(prev => !prev)}>☰</button>
 
+                {
+                    sidebarOpen && (
+                        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}/>
+                    )
+                }
+
                 <ConversationSidebar
                     conversations={conversations}
                     activeConversationId={conversationId}
@@ -117,12 +123,6 @@ function App(){
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
                 />
-
-                {
-                    sidebarOpen && (
-                        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}/>
-                    )
-                }
 
                 <div className={darkMode ? "app dark" : "app"}>
                     <Navbar

@@ -148,11 +148,31 @@ app.post("/api/analyze", async (req, res) => {
             const result = await chat.sendMessage(messageParts);
             text = result.response.text();
 
+            const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+            const parsed = JSON.parse(cleanText);
+
+            await supabase.from("messages").insert([
+                {
+                    conversation_id: activeConversationId,
+                    role:"assistant",
+                    content:parsed.answer
+                }
+            ]);
+
         } catch(aiError){
             console.error(
                 "Gemini Error:",
                 aiError
             );
+
+            await supabase.from("messages").insert([
+                {
+                    conversation_id: activeConversationId,
+                    role: "assistant",
+                    content: "Sorry, PlantPal AI is currently busy. Please try again later."
+                }
+            ]);
             return res.status(500).json({
                 answer: "PlantPal AI is currently busy 🌱 Please try again in a moment.",
                 healthScore:0,
