@@ -317,6 +317,27 @@ app.delete("/api/conversations/:id", async (req, res) => {
     }
 });
 
+app.patch("/api/conversations/:id", async(req,res)=>{
+    try{
+        const { id } = req.params;
+        const { title } = req.body;
+        const { error } = await supabase.from("conversations").update({title}).eq("id", id);
+
+        if(error){
+            return res.status(500).json({
+                error:error.message
+            });
+        }
+
+        res.json({
+            message:"Conversation renamed"
+        });
+    }catch(error){
+        console.error(error);
+        res.status(500).json({error:"Failed to rename conversation"});
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`PlantPal backend running on port ${PORT}`);
 });

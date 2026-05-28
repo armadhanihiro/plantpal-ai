@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import CareGuide from "./pages/CareGuide";
 import About from "./pages/About";
 
-import {getConversations, getMessages, getConversationPlant, deleteConversation} from "./services/aiService";
+import {getConversations, getMessages, getConversationPlant, deleteConversation, renameConversation} from "./services/aiService";
 
 function App(){
 
@@ -95,6 +95,11 @@ function App(){
         await refreshConversations();
     };
 
+    const handleRenameConversation = async(id, title)=>{
+        await renameConversation(id, title);
+        await refreshConversations();
+    };
+
 
     return(
         <BrowserRouter>
@@ -108,6 +113,7 @@ function App(){
                     onSelectConversation={handleSelectConversation}
                     onNewChat={handleNewChat}
                     onDeleteConversation={handleDeleteConversation}
+                    onRenameConversation={handleRenameConversation}
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
                 />

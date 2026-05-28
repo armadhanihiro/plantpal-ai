@@ -105,15 +105,15 @@ body.dark-body{
     display:flex;
     flex-direction:column;
     gap:.25rem;
-    overflow-y:auto;
+    /* overflow-y:auto; */
 }
 
 .conversation-row{
     position:relative;
-    height:2.45rem;
+    min-height:2.45rem;
     border-radius:.55rem;
     background:transparent;
-    overflow:hidden;
+    /* overflow:visible; */
     transition:.2s ease;
 }
 
@@ -151,7 +151,7 @@ body.dark-body{
     font-weight:600;
 }
 
-.delete-conversation-btn{
+.conversation-menu-btn{
     position:absolute;
     right:.45rem;
     top:50%;
@@ -172,17 +172,49 @@ body.dark-body{
     transition:.2s ease;
 }
 
-.conversation-row:hover .delete-conversation-btn{
+.conversation-row:hover .conversation-menu-btn{
     opacity:1;
 }
 
-.delete-conversation-btn:hover{
+.conversation-menu-btn:hover{
     background:rgba(255,255,255,.08);
     color:#f87171;
 }
 
-.conversation-row.active-conversation .delete-conversation-btn{
+.conversation-row.active-conversation .conversation-menu-btn{
     color:#052e16;
+}
+
+.conversation-dropdown{
+    position:absolute;
+    right:.4rem;
+    top:2rem;
+    z-index:999;
+    width:8rem;
+    padding:.4rem;
+    border-radius:.6rem;
+    background:#1e293b;
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+
+.conversation-dropdown button{
+    width:100%;
+    margin:0;
+    padding:.6rem .7rem;
+    background:transparent;
+    color:#f8fafc;
+    border:none;
+    border-radius:.45rem;
+    justify-content:flex-start;
+    font-size:.85rem;
+}
+
+.conversation-dropdown button:hover{
+    background:#334155;
+}
+
+.conversation-dropdown .danger{
+    color:#f87171;
 }
 
 .empty-conversation{

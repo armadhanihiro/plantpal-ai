@@ -120,3 +120,19 @@ export async function deleteConversation(conversationId) {
         return null;
     }
 }
+
+export async function renameConversation(conversationId, title){
+    try{
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/conversations/${conversationId}`,
+            {
+                method:"PATCH",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({title})
+            }
+        );
+        return await response.json();
+    }catch(error){
+        console.error(error);
+        return null;
+    }
+}

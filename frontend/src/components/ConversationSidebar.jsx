@@ -1,8 +1,11 @@
 import { Leaf } from "lucide-react";
+import { useState } from "react";
 
 function ConversationSidebar({conversations, activeConversationId, onSelectConversation, onNewChat, 
-    onDeleteConversation, sidebarOpen, setSidebarOpen}) {
+    onDeleteConversation, onRenameConversation, sidebarOpen, setSidebarOpen}) {
     
+    const [openMenuId, setOpenMenuId] = useState(null);
+
     return (
         <aside className={sidebarOpen ? "conversation-sidebar sidebar-open" : "conversation-sidebar"}>
 
@@ -42,12 +45,44 @@ function ConversationSidebar({conversations, activeConversationId, onSelectConve
                                     {item.title || "Untitled Plant Chat"}
                                 </button>
 
-                                <button className="delete-conversation-btn" onClick={(e) => {
+                                <button className="conversation-menu-btn" onClick={(e) => {
                                         e.stopPropagation();
-                                        onDeleteConversation(item.id);
+                                        setOpenMenuId(
+                                            openMenuId === item.id ? null : item.id
+                                        );
                                 }}>
                                     ...
                                 </button>
+
+                                {
+                                    openMenuId === item.id && (
+                                        <div className="conversation-dropdown">
+                                            <button onClick={(e) => {
+                                                e.stopPropagation();
+                                                const newTitle = prompt("Rename conversation:", item.title);
+
+                                                if (newTitle && newTitle.trim()) {
+                                                    onRenameConversation(
+                                                        item.id,
+                                                        newTitle.trim()
+                                                    );
+                                                }
+
+                                                setOpenMenuId(null);
+                                            }}>
+                                                Rename
+                                            </button>
+
+                                            <button className="danger" onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onDeleteConversation(item.id);
+                                                    setOpenMenuId(null);
+                                            }}>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    )
+                                }
                             </div>
                         ))
                     )
