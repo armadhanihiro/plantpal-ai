@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import ConversationSidebar from "./components/ConversationSidebar";
 
+import { supabase } from "./services/supabaseClient";
+
+import AuthPage from "./pages/AuthPage";
 import Home from "./pages/Home";
 import CareGuide from "./pages/CareGuide";
 import About from "./pages/About";
@@ -22,12 +25,35 @@ function App(){
 
     });
 
+    const [session, setSession] = useState(null);
+    const [authLoading, setAuthLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [conversations, setConversations] = useState([]);
     const [conversationId, setConversationId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [plantData, setPlantData] = useState(null);
     const [image, setImage] = useState(null);
+
+    useEffect(() => {
+        async function getInitialSession() {
+            const { data } = await supabase.auth.getSession();
+
+            setSession(data.session);
+            setAuthLoading(false);
+        }
+
+        getInitialSession();
+
+        const { data } = supabase.auth.onAuthStateChange(
+            (_event, session) => {
+                setSession(session);
+            }
+        );
+
+        return () => {
+            data.subscription.unsubscribe();
+        };
+    }, []);
 
     useEffect(()=>{
         localStorage.setItem(
@@ -38,13 +64,17 @@ function App(){
     },[darkMode])
 
     const refreshConversations = async () => {
-        const data = await getConversations();
+        if (!session?.user?.id) return;
+
+        const data = await getConversations(session.user.id);
         setConversations(data);
     };
 
     useEffect(() => {
-        refreshConversations();
-    }, []);
+        if (session?.user?.id) {
+            refreshConversations();
+        }
+    }, [session]);
 
     const handleSelectConversation = async (id) => {
         setConversationId(id);
@@ -100,6 +130,23 @@ function App(){
         await refreshConversations();
     };
 
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+
+        setSession(null);
+        setConversationId(null);
+        setMessages([]);
+        setPlantData(null);
+        setImage(null);
+    };
+
+    if (authLoading) {
+        return null;
+    }
+
+    if (!session) {
+        return <AuthPage />;
+    }
 
     return(
         <BrowserRouter>
@@ -120,6 +167,7 @@ function App(){
                     onNewChat={handleNewChat}
                     onDeleteConversation={handleDeleteConversation}
                     onRenameConversation={handleRenameConversation}
+                    onLogout={handleLogout}
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
                 />
@@ -135,6 +183,7 @@ function App(){
                             path="/"
                             element={
                                 <Home
+                                    userId={session.user.id}
                                     conversationId={conversationId}
                                     setConversationId={setConversationId}
                                     messages={messages}

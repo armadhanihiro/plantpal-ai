@@ -29,12 +29,13 @@ app.get("/", (req, res) => {
 
 app.post("/api/analyze", async (req, res) => {
     try {
-        const { question, imageBase64, mimeType, conversationId } = req.body;
+        const { question, imageBase64, mimeType, conversationId, userId } = req.body;
         let activeConversationId = conversationId;
         if(!activeConversationId){
             const {data:newConversation, error:conversationError} = await supabase.from("conversations").insert([
                 {
-                    title : question.length > 40 ? question.slice(0,40) + "..." : question
+                    title : question.length > 40 ? question.slice(0,40) + "..." : question,
+                    user_id: userId
                 }
             ]).select().single();
 
@@ -261,7 +262,13 @@ app.get("/api/history", async(req,res)=>{
 
 app.get("/api/conversations", async (req, res) => {
     try {
-        const { data, error } = await supabase.from("conversations").select("*").order("created_at", { ascending: false });
+        const { userId } = req.query;
+
+        const { data, error } = await supabase
+            .from("conversations")
+            .select("*")
+            .eq("user_id", userId)
+            .order("created_at", { ascending: false });
         if (error) {
             return res.status(500).json({
                 error: error.message,

@@ -13,7 +13,7 @@ import Footer from "../components/Footer";
 
 import "../App.css";
 
-function Home({conversationId, setConversationId, messages, setMessages, refreshConversations, plantData, setPlantData, image, setImage}) {
+function Home({userId, conversationId, setConversationId, messages, setMessages, refreshConversations, plantData, setPlantData, image, setImage}) {
     const [imageFile, setImageFile] = useState(null);
     const [question, setQuestion] = useState("");
     const [loading, setLoading] = useState(false);
@@ -46,7 +46,7 @@ function Home({conversationId, setConversationId, messages, setMessages, refresh
 
         setQuestion("");
 
-        const response = await askPlantAI(question, imageFile, conversationId);
+        const response = await askPlantAI(question, imageFile, conversationId, userId);
         setConversationId(response.conversationId);
 
         await refreshConversations();

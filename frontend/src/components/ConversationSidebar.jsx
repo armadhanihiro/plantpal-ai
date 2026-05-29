@@ -2,7 +2,7 @@ import { Leaf } from "lucide-react";
 import { useState } from "react";
 
 function ConversationSidebar({conversations, activeConversationId, onSelectConversation, onNewChat, 
-    onDeleteConversation, onRenameConversation, sidebarOpen, setSidebarOpen}) {
+    onDeleteConversation, onRenameConversation, onLogout, sidebarOpen, setSidebarOpen}) {
     
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingId, setEditingId] = useState(null);
@@ -149,6 +149,12 @@ function ConversationSidebar({conversations, activeConversationId, onSelectConve
                     </div>
                 )
             }
+            <button
+                className="logout-btn"
+                onClick={onLogout}
+            >
+                Logout
+            </button>
         </aside>
     );
 }

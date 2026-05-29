@@ -16,6 +16,185 @@ body.dark-body{
     background:#101a13;
 }
 
+/* AUTH PAGE */
+
+/* AUTH PAGE - COZY PLANT */
+
+.auth-page{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(168, 216, 160, .55), transparent 30%),
+        linear-gradient(135deg,#f4f0df,#dfead3);
+    padding:2rem;
+}
+
+.auth-illustration{
+    position:relative;
+    padding:2.5rem;
+    border-radius:2rem;
+    background:
+        linear-gradient(160deg,rgba(255,255,255,.55),rgba(255,255,255,.18));
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+}
+
+.auth-illustration::before{
+    content:"";
+    position:absolute;
+    width:18rem;
+    height:18rem;
+    border-radius:50%;
+    background:rgba(47,107,63,.12);
+    right:-5rem;
+    top:6rem;
+}
+
+.auth-brand{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+}
+
+.auth-brand-icon{
+    width:3.4rem;
+    height:3.4rem;
+    border-radius:1.2rem;
+    background:#2f6b3f;
+    color:#f7f3df;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.auth-brand h1{
+    margin:0;
+    color:#173b22;
+    font-size:2.4rem;
+}
+
+.auth-brand p{
+    margin:.35rem 0 0;
+    color:#5f6f61;
+    font-size:1rem;
+}
+
+.plant-orb{
+    position:relative;
+    z-index:1;
+    width:15rem;
+    height:15rem;
+    border-radius:50%;
+    margin:auto;
+    background:
+        radial-gradient(circle,#f7f3df 0%,#cfe7c8 70%);
+    color:#2f6b3f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 25px 60px rgba(47,107,63,.22);
+}
+
+.auth-benefits{
+    position:relative;
+    z-index:1;
+    display:grid;
+    gap:.8rem;
+}
+
+.auth-benefits div{
+    display:flex;
+    align-items:center;
+    gap:.75rem;
+    color:#294c32;
+    background:rgba(255,255,255,.45);
+    padding:.85rem 1rem;
+    border-radius:1rem;
+}
+
+.cozy-auth-card{
+    align-self:center;
+    justify-self:center;
+    width:min(100%,26rem);
+    padding:2rem;
+    border-radius:1.5rem;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(255,255,255,.6);
+    box-shadow:0 25px 60px rgba(47,107,63,.18);
+    backdrop-filter:blur(14px);
+}
+
+.auth-card-header h2{
+    margin:0;
+    color:#173b22;
+    font-size:2rem;
+}
+
+.auth-card-header p{
+    margin:.6rem 0 1.5rem;
+    color:#687568;
+    line-height:1.6;
+}
+
+.auth-card form{
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+}
+
+.auth-card label{
+    color:#2d4b33;
+    font-weight:600;
+    font-size:.9rem;
+}
+
+.auth-card input{
+    width:100%;
+    margin-top:.45rem;
+    padding:.95rem 1rem;
+    border-radius:.9rem;
+    border:1px solid #d8dfd2;
+    background:#fffef8;
+    color:#173b22;
+    font-size:.95rem;
+    outline:none;
+}
+
+.auth-card input:focus{
+    border-color:#6cab75;
+    box-shadow:0 0 0 4px rgba(108,171,117,.16);
+}
+
+.auth-card form button{
+    margin:0;
+    padding:.95rem 1rem;
+    border-radius:.9rem;
+    background:#2f6b3f;
+    color:#f7f3df;
+}
+
+.auth-message{
+    color:#2f6b3f;
+    text-align:center;
+    font-size:.9rem;
+    line-height:1.5;
+}
+
+.auth-toggle{
+    width:100%;
+    margin-top:1rem;
+    padding:.8rem;
+    border:none;
+    background:transparent;
+    color:#2f6b3f;
+    font-weight:700;
+}
+
 /* APP LAYOUT */
 
 .app-layout{
@@ -297,6 +476,24 @@ body.dark-body{
     color:#94a3b8;
     font-size:.9rem;
     margin:.5rem 0;
+}
+
+/* LOGOUT SIDEBAR */
+
+.logout-btn{
+    margin-top:auto;
+    width:100%;
+    padding:.7rem .8rem;
+    border:none;
+    border-radius:.55rem;
+    background:#1e293b;
+    color:#f8fafc;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.logout-btn:hover{
+    background:#f87171;
 }
 
 /* NAVBAR */
@@ -898,6 +1095,14 @@ button:disabled{
 /* RESPONSIVE */
 
 @media (max-width:768px){
+    .auth-page{
+        grid-template-columns:1fr;
+        padding:1rem;
+    }
+
+    .auth-illustration{
+        display:none;
+    }
 
     .navbar{
         display:none;

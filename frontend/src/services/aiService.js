@@ -11,7 +11,7 @@ async function fileToBase64(file) {
 }
 
 
-export async function askPlantAI(question, imageFile, conversationId){
+export async function askPlantAI(question, imageFile, conversationId, userId){
     try{
         let imageBase64 = null;
         let mimeType = null;
@@ -33,7 +33,8 @@ export async function askPlantAI(question, imageFile, conversationId){
                     question,
                     imageBase64,
                     mimeType,
-                    conversationId
+                    conversationId,
+                    userId
                 })
             }
         );
@@ -65,10 +66,10 @@ export async function getPlantHistory(){
     }
 }
 
-export async function getConversations() {
+export async function getConversations(userId) {
     try {
         const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/conversations`
+            `${import.meta.env.VITE_API_URL}/api/conversations?userId=${userId}`
         );
 
         return await response.json();
