@@ -4,8 +4,7 @@ import { Send } from "lucide-react";
 import { askPlantAI } from "../services/aiService";
 
 import Hero from "../components/Hero";
-import UploadBox from "../components/UploadBox";
-import ImagePreview from "../components/ImagePreview";
+import PlantPanel from "../components/PlantPanel";
 import SuggestionChips from "../components/SuggestionChips";
 import EmptyState from "../components/EmptyState";
 import ChatMessages from "../components/ChatMessages";
@@ -98,60 +97,73 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
                     <Hero />
 
                     <main className="card">
+                        <div className="chat-workspace">
+                            <section className="chat-area">
 
-                        <UploadBox handleImageUpload={handleImageUpload}/>
-                        
-                        <ImagePreview image={image} plantData={plantData}/>
+                                {
+                                    messages.length === 0 && !loading && !result && (
+                                        <EmptyState />
+                                    )
+                                }
 
-                        {
-                            messages.length === 0 && !loading && !result && (
-                                <EmptyState />
-                            )
-                        }
+                                {
+                                    messages.length === 0 && (
+                                        <SuggestionChips 
+                                            setQuestion={setQuestion}
+                                            textareaRef={textareaRef}
+                                        />
+                                    )
+                                }
 
-                        {
-                            messages.length === 0 && (
-                                <SuggestionChips 
-                                    setQuestion={setQuestion}
-                                    textareaRef={textareaRef}
-                                />
-                            )
-                        }
+                                {
+                                    messages.length > 0 && (
+                                        <ChatMessages messages={messages} />
+                                    )
+                                }
 
-                        {
-                            messages.length > 0 && (
-                                <ChatMessages messages={messages} />
-                            )
-                        }
+                                <div ref={chatEndRef}></div>
 
-                        <div ref={chatEndRef}></div>
+                                {
+                                    loading && (
+                                        <div className="thinking">
+                                            <div className="thinking-dots">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
 
-                        {
-                            loading && (
-                                <div className="thinking">
-                                    <div className="thinking-dots">
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                    </div>
+                                            <p>🌱 PlantPal is thinking...</p>
+                                        </div>
+                                    )
+                                }
 
-                                    <p>🌱 PlantPal is thinking...</p>
+                                <div className="chat-input-area">
+                                    <label className="chat-upload-btn">
+                                        📎
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            hidden
+                                        />
+                                    </label>
+
+                                    <textarea 
+                                        ref={textareaRef}
+                                        placeholder="Ask something about your plant..."
+                                        value={question}
+                                        onChange={(e)=>setQuestion(e.target.value)}
+                                    />
+
+                                    <button className="chat-send-btn" onClick={handleSubmit} disabled={loading}>
+                                        <Send size={18}/>
+                                    </button>
+
                                 </div>
-                            )
-                        }
+                            </section>
 
-                        <textarea 
-                            ref={textareaRef}
-                            placeholder="Ask something about your plant..."
-                            value={question}
-                            onChange={(e)=>setQuestion(e.target.value)}
-                        />
-
-                        <button onClick={handleSubmit} disabled={loading}>
-                            <Send size={18}/>
-                            Ask PlantPal
-                        </button>
-
+                            <PlantPanel image={image} plantData={plantData}/>
+                        </div>
                     </main>
 
                     <Footer />

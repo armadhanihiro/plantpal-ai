@@ -1,7 +1,7 @@
 import { Leaf } from "lucide-react";
 import { useState } from "react";
 
-function ConversationSidebar({conversations, activeConversationId, onSelectConversation, onNewChat, 
+function ConversationSidebar({user, conversations, activeConversationId, onSelectConversation, onNewChat, 
     onDeleteConversation, onRenameConversation, onLogout, sidebarOpen, setSidebarOpen}) {
     
     const [openMenuId, setOpenMenuId] = useState(null);
@@ -149,12 +149,28 @@ function ConversationSidebar({conversations, activeConversationId, onSelectConve
                     </div>
                 )
             }
-            <button
-                className="logout-btn"
-                onClick={onLogout}
-            >
-                Logout
-            </button>
+
+            <div className="sidebar-footer">
+                <div className="sidebar-user">
+                    <div className="sidebar-user-avatar">
+                        {user?.email?.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div className="sidebar-user-info">
+                        <strong>{user?.email?.split("@")[0]}</strong>
+
+                        <span>{user?.email}</span>
+                    </div>
+
+                </div>
+
+                <button
+                    className="logout-btn"
+                    onClick={onLogout}
+                >
+                    Logout
+                </button>
+            </div>
         </aside>
     );
 }

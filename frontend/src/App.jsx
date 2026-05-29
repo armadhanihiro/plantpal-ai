@@ -161,6 +161,7 @@ function App(){
                 }
 
                 <ConversationSidebar
+                    user={session?.user}
                     conversations={conversations}
                     activeConversationId={conversationId}
                     onSelectConversation={handleSelectConversation}

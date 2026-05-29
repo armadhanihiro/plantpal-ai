@@ -57,14 +57,7 @@ function AuthPage() {
             return;
         }
 
-        if (isLogin) {
-            setMessage("Welcome back to PlantPal 🌱");
-        } else {
-            setIsLogin(true);
-            setPassword("");
-            setMessage("Account created successfully. Please login to continue.");
-        }
-
+        setMessage(isLogin ? "Welcome back to PlantPal 🌱" : "Welcome to PlantPal 🌱");
         setLoading(false);
     };
 
