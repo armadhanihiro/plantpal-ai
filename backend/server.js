@@ -31,6 +31,7 @@ app.post("/api/analyze", async (req, res) => {
     try {
         const { question, imageBase64, mimeType, conversationId, userId } = req.body;
         let activeConversationId = conversationId;
+        let createdNewConversation = false;
         if(!activeConversationId){
             const {data:newConversation, error:conversationError} = await supabase.from("conversations").insert([
                 {
@@ -46,15 +47,8 @@ app.post("/api/analyze", async (req, res) => {
                 });
             }
                 activeConversationId = newConversation.id;
+                createdNewConversation = true;
         }
-
-        await supabase.from("messages").insert([
-            {
-                conversation_id: activeConversationId,
-                role:"user",
-                content:question
-            }
-        ]);
 
         const prompt = `
             You are PlantPal AI, a friendly plant care assistant.
@@ -128,9 +122,6 @@ app.post("/api/analyze", async (req, res) => {
         let imageUrl = null;
 
         if(imageBase64 && mimeType){
-            console.log("Has image:", !!imageBase64);
-            console.log("Mime type:", mimeType);
-
             const buffer = Buffer.from(imageBase64, "base64");
             const fileName = `${Date.now()}.png`;
             const { error: uploadError } = await supabase.storage.from("plant-images").upload(fileName,buffer, {contentType: mimeType});
@@ -140,9 +131,17 @@ app.post("/api/analyze", async (req, res) => {
             } else {
                 const { data: urlData } = supabase.storage.from("plant-images").getPublicUrl(fileName);
                 imageUrl = urlData.publicUrl;
-                console.log("Image URL:", imageUrl);
             }
         }
+
+        await supabase.from("messages").insert([
+            {
+                conversation_id: activeConversationId,
+                role:"user",
+                content:question,
+                image_url:imageUrl
+            }
+        ]);
 
         let text = "";
         try{
@@ -184,8 +183,6 @@ app.post("/api/analyze", async (req, res) => {
             });
         }
 
-        console.log("RAW GEMINI RESPONSE:", text);
-
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
         
         let parsed;
@@ -218,15 +215,13 @@ app.post("/api/analyze", async (req, res) => {
             }
         ]).select();
 
-        if (error) {
-            console.error("Supabase insert error:", error);
-        } else {
-            console.log("Saved to Supabase:", data);
-        }
-
         res.json({...parsed, imageUrl, conversationId:activeConversationId});
     } catch (error) {
             console.error(error);
+            if (createdNewConversation && activeConversationId) {
+                await supabase.from("conversations").delete().eq("id", activeConversationId);
+            }
+
             res.status(500).json(
                 {
                     error: "PlantPal backend failed to analyze the request.",

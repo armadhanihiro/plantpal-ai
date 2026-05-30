@@ -61,6 +61,15 @@ function AuthPage() {
         setLoading(false);
     };
 
+    const handleGoogleLogin = async () => {
+        await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: window.location.origin
+            }
+        });
+    };
+
     return (
         <div className="auth-page cozy-auth">
             <div className="auth-illustration">
@@ -139,6 +148,19 @@ function AuthPage() {
                             : "Create Account"}
                     </button>
                 </form>
+
+                <div className="auth-divider">
+                    <span>OR</span>
+                </div>
+
+                <button type="button" className="google-login-btn" onClick={handleGoogleLogin}>
+                    <img
+                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                        alt="Google"
+                        className="google-icon"
+                    />
+                    <span>Continue with Google</span>
+                </button>
 
                 {message && (
                     <p className="auth-message">

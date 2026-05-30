@@ -33,6 +33,7 @@ function App(){
     const [messages, setMessages] = useState([]);
     const [plantData, setPlantData] = useState(null);
     const [image, setImage] = useState(null);
+    const [deleteTarget, setDeleteTarget] = useState(null);
 
     useEffect(() => {
         async function getInitialSession() {
@@ -70,7 +71,8 @@ function App(){
 
         const formattedMessages = data.map((item) => ({
             role: item.role,
-            content: item.content
+            content: item.content,
+            image: item.image_url
         }));
 
         setMessages(formattedMessages);
@@ -136,6 +138,13 @@ function App(){
         await refreshConversations();
     };
 
+    const confirmDeleteConversation = async () => {
+        if (!deleteTarget) return;
+
+        await handleDeleteConversation(deleteTarget.id);
+        setDeleteTarget(null);
+    };
+
     const handleRenameConversation = async(id, title)=>{
         await renameConversation(id, title);
         await refreshConversations();
@@ -179,6 +188,7 @@ function App(){
                     onNewChat={handleNewChat}
                     onDeleteConversation={handleDeleteConversation}
                     onRenameConversation={handleRenameConversation}
+                    setDeleteTarget={setDeleteTarget}
                     onLogout={handleLogout}
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
@@ -221,6 +231,31 @@ function App(){
                     </Routes>
 
                 </div>
+                {
+                    deleteTarget && (
+                        <div className="delete-modal-backdrop">
+                            <div className="delete-modal">
+                                <h3>Delete conversation?</h3>
+
+                                <p>
+                                    This will permanently delete
+                                    <strong> {deleteTarget.title || "Untitled Plant Chat"} </strong>
+                                    from your history.
+                                </p>
+
+                                <div className="delete-modal-actions">
+                                    <button className="cancel-delete-btn" onClick={() => setDeleteTarget(null)}>
+                                        Cancel
+                                    </button>
+
+                                    <button className="confirm-delete-btn" onClick={confirmDeleteConversation}>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         </BrowserRouter>
     )

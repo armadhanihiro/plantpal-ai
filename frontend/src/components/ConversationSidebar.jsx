@@ -2,12 +2,11 @@ import { Leaf } from "lucide-react";
 import { useState } from "react";
 
 function ConversationSidebar({user, conversations, activeConversationId, onSelectConversation, onNewChat, 
-    onDeleteConversation, onRenameConversation, onLogout, sidebarOpen, setSidebarOpen}) {
+             onRenameConversation, setDeleteTarget, onLogout, sidebarOpen, setSidebarOpen}) {
     
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingId, setEditingId] = useState(null);
     const [editingTitle, setEditingTitle] = useState("");
-    const [deleteTarget, setDeleteTarget] = useState(null);
 
     return (
         <aside className={sidebarOpen ? "conversation-sidebar sidebar-open" : "conversation-sidebar"}
@@ -116,41 +115,6 @@ function ConversationSidebar({user, conversations, activeConversationId, onSelec
                     )
                 }
             </div>
-        
-            {
-                deleteTarget && (
-                    <div className="delete-modal-backdrop">
-                        <div className="delete-modal">
-                            <h3>Delete conversation?</h3>
-
-                            <p>
-                                This will permanently delete
-                                <strong> {deleteTarget.title || "Untitled Plant Chat"} </strong>
-                                from your history.
-                            </p>
-
-                            <div className="delete-modal-actions">
-                                <button
-                                    className="cancel-delete-btn"
-                                    onClick={() => setDeleteTarget(null)}
-                                >
-                                    Cancel
-                                </button>
-
-                                <button
-                                    className="confirm-delete-btn"
-                                    onClick={() => {
-                                        onDeleteConversation(deleteTarget.id);
-                                        setDeleteTarget(null);
-                                    }}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
 
             <div className="sidebar-footer">
                 <div className="sidebar-user">

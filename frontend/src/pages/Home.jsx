@@ -14,6 +14,7 @@ import "../App.css";
 
 function Home({userId, conversationId, setConversationId, messages, setMessages, refreshConversations, plantData, setPlantData, image, setImage}) {
     const [imageFile, setImageFile] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
     const [question, setQuestion] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
@@ -23,10 +24,7 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
         const file = e.target.files[0];
 
         if(file){
-            setImage(
-                URL.createObjectURL(file)
-            );
-
+            setSelectedImage(URL.createObjectURL(file));
             setImageFile(file)
         }
     };
@@ -39,7 +37,7 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
         const userMessage = {
             role:"user", 
             content:question,
-            image:image
+            image: selectedImage
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -48,6 +46,11 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
 
         const response = await askPlantAI(question, imageFile, conversationId, userId);
         setConversationId(response.conversationId);
+
+        localStorage.setItem(
+            "lastConversationId",
+            response.conversationId
+        );
 
         await refreshConversations();
 
@@ -76,7 +79,8 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
             setImage(response.imageUrl);
         }
 
-        // setImageFile(null);
+        setImageFile(null);
+        setSelectedImage(null);
         setLoading(false);
     };
 
@@ -140,11 +144,11 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
                                 }
 
                                 {
-                                    image && (
+                                    selectedImage && (
                                         <div className="selected-image-preview">
-                                            <img src={image} alt="Selected plant"/>
+                                            <img src={selectedImage} alt="Selected plant"/>
                                             <button className="remove-image-btn" onClick={() => {
-                                                    setImage(null);
+                                                    setSelectedImage(null);
                                                     setImageFile(null);
                                                 }}
                                             >
