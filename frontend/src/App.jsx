@@ -63,22 +63,9 @@ function App(){
         document.body.classList.toggle("dark-body", darkMode)
     },[darkMode])
 
-    const refreshConversations = async () => {
-        if (!session?.user?.id) return;
-
-        const data = await getConversations(session.user.id);
-        setConversations(data);
-    };
-
-    useEffect(() => {
-        if (session?.user?.id) {
-            refreshConversations();
-        }
-    }, [session]);
-
     const handleSelectConversation = async (id) => {
+         localStorage.setItem("lastConversationId", id);
         setConversationId(id);
-
         const data = await getMessages(id);
 
         const formattedMessages = data.map((item) => ({
@@ -106,6 +93,30 @@ function App(){
             setImage(null)
         }
     };
+
+    const refreshConversations = async () => {
+        if (!session?.user?.id) return;
+
+        const data = await getConversations(session.user.id);
+        setConversations(data);
+        return data;
+    };
+
+    useEffect(() => {
+        async function initializeApp(){
+            if(!session?.user?.id) return;
+
+            const conversations = await refreshConversations();
+            const lastConversationId = localStorage.getItem("lastConversationId");
+
+            if (lastConversationId) {
+                await handleSelectConversation(lastConversationId);
+            }else if (conversations?.length > 0) {
+                await handleSelectConversation(conversations[0].id);
+            }
+        }
+        initializeApp();
+    }, [session]);
 
     const handleNewChat = () => {
         setConversationId(null);

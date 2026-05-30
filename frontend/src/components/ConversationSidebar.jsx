@@ -73,7 +73,9 @@ function ConversationSidebar({user, conversations, activeConversationId, onSelec
                                                 setSidebarOpen(false);
                                             }}
                                         >
-                                            {item.title || "Untitled Plant Chat"}
+                                            <span className="conversation-title">
+                                                {item.title || "Untitled Plant Chat"}
+                                            </span>
                                         </button>
                                     )
                                 }

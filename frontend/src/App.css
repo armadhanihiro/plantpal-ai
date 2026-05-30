@@ -307,24 +307,28 @@ body.dark-body{
     background:#22c55e;
 }
 
+.conversation-title{
+    display:block;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
 .conversation-item{
     width:100%;
     height:100%;
     margin:0;
-    padding:0 2.3rem 0 .75rem;
+    padding:0 3.4rem 0 .75rem;
     background:transparent;
     border:none;
     color:#f8fafc;
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
+    display:block;
     text-align:left;
     font-size:.88rem;
     font-weight:500;
-    line-height:1;
-    white-space:nowrap;
+    line-height:2.45rem;
     overflow:hidden;
-    text-overflow:ellipsis;
     cursor:pointer;
 }
 
@@ -351,6 +355,8 @@ body.dark-body{
     justify-content:center;
     cursor:pointer;
     opacity:0;
+    font-size: 1rem;
+    z-index: 2;
     transition:.2s ease;
 }
 
@@ -861,6 +867,44 @@ body.dark-body{
     border-radius:1rem;
 }
 
+/* INPUT IMAGE */
+.selected-image-preview{
+    position:relative;
+    width:8rem;
+    margin-top:1rem;
+    margin-bottom:.75rem;
+}
+
+.selected-image-preview img{
+    width:100%;
+    height:8rem;
+    object-fit:cover;
+    border-radius:1rem;
+    border:1px solid #dce7db;
+}
+
+.remove-image-btn{
+    position:absolute;
+    top:.35rem;
+    right:.35rem;
+    width:1.75rem;
+    height:1.75rem;
+    border:none;
+    border-radius:50%;
+    background:rgba(0,0,0,.65);
+    color:white;
+    cursor:pointer;
+}
+
+.message-image{
+    width:100%;
+    max-width:16rem;
+    max-height:12rem;
+    object-fit:cover;
+    border-radius:.9rem;
+    margin-bottom:.75rem;
+}
+
 /* UPLOAD */
 
 .upload-box{
@@ -881,7 +925,7 @@ body.dark-body{
     border-color:#6cab75;
 }
 
-/* IMAGE */
+/* IMAGE PREVIEW */
 
 .preview{
     width:100%;

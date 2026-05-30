@@ -9,7 +9,19 @@ function ChatMessages({ messages }) {
                             key={index}
                             className={message.role === "user" ? "message user" : "message assistant"}
                         >
-                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                             {
+                            message.image && (
+                                <img src={message.image} alt="Uploaded plant" className="message-image"/>
+                            )
+                        }
+
+                        {
+                            message.content && (
+                                <ReactMarkdown>
+                                    {message.content}
+                                </ReactMarkdown>
+                            )
+                        }
                         </div>
                     )
                 )
