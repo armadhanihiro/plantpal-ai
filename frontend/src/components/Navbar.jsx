@@ -17,24 +17,24 @@ function Navbar({darkMode, setDarkMode}) {
 
             <div className={menuOpen ?"nav-links open" :"nav-links"}>
                 <NavLink 
-                to="/" 
-                className={({isActive})=> isActive ?"nav-link active-link":"nav-link"}
-                onClick={()=>setMenuOpen(false)}>
-                    Home
+                    to="/" 
+                    className={({isActive})=> isActive ?"nav-link active-link":"nav-link"}
+                    onClick={()=>setMenuOpen(false)}>
+                        Chat
                 </NavLink>
 
                 <NavLink 
-                to="/guide" 
-                className={({isActive})=> isActive ?"nav-link active-link" :"nav-link"}
-                onClick={()=>setMenuOpen(false)}>
-                    Care Guide
+                    to="/journey" 
+                    className={({isActive})=> isActive ?"nav-link active-link" :"nav-link"}
+                    onClick={()=>setMenuOpen(false)}>
+                        Journey
                 </NavLink>
 
                 <NavLink 
-                to="/about" 
-                className={({isActive})=> isActive ?"nav-link active-link" :"nav-link"}
-                onClick={()=>setMenuOpen(false)}>
-                    About
+                    to="/settings" 
+                    className={({isActive})=> isActive ?"nav-link active-link" :"nav-link"}
+                    onClick={()=>setMenuOpen(false)}>
+                        Settings
                 </NavLink>
 
                 <button className="mode-btn" onClick={()=> setDarkMode(!darkMode)}>{darkMode?"☀️":"🌙"}</button>

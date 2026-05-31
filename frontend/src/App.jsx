@@ -1,4 +1,4 @@
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Navbar from "./components/Navbar";
@@ -8,8 +8,8 @@ import { supabase } from "./services/supabaseClient";
 
 import AuthPage from "./pages/AuthPage";
 import Home from "./pages/Home";
-import CareGuide from "./pages/CareGuide";
-import About from "./pages/About";
+import PlantJourney from "./pages/PlantJourney";
+import Settings from "./pages/Settings";
 
 import {getConversations, getMessages, getConversationPlant, deleteConversation, renameConversation} from "./services/aiService";
 
@@ -24,6 +24,9 @@ function App(){
         ) || false;
 
     });
+
+    const location = useLocation();
+    const showConversationSidebar = location.pathname === "/";
 
     const [session, setSession] = useState(null);
     const [authLoading, setAuthLoading] = useState(true);
@@ -179,7 +182,7 @@ function App(){
     }
 
     return(
-        <BrowserRouter>
+        // <BrowserRouter>
             <div className="app-layout">
 
                 <button className="sidebar-toggle" onClick={() => setSidebarOpen(prev => !prev)}>☰</button>
@@ -190,19 +193,21 @@ function App(){
                     )
                 }
 
-                <ConversationSidebar
-                    user={session?.user}
-                    conversations={conversations}
-                    activeConversationId={conversationId}
-                    onSelectConversation={handleSelectConversation}
-                    onNewChat={handleNewChat}
-                    onDeleteConversation={handleDeleteConversation}
-                    onRenameConversation={handleRenameConversation}
-                    setDeleteTarget={setDeleteTarget}
-                    onLogout={handleLogout}
-                    sidebarOpen={sidebarOpen}
-                    setSidebarOpen={setSidebarOpen}
-                />
+                {showConversationSidebar && (
+                    <ConversationSidebar
+                        user={session?.user}
+                        conversations={conversations}
+                        activeConversationId={conversationId}
+                        onSelectConversation={handleSelectConversation}
+                        onNewChat={handleNewChat}
+                        onDeleteConversation={handleDeleteConversation}
+                        onRenameConversation={handleRenameConversation}
+                        setDeleteTarget={setDeleteTarget}
+                        onLogout={handleLogout}
+                        sidebarOpen={sidebarOpen}
+                        setSidebarOpen={setSidebarOpen}
+                    />
+                )}
 
                 <div className={darkMode ? "app dark" : "app"}>
                     <Navbar
@@ -230,13 +235,13 @@ function App(){
                         />
 
                         <Route
-                            path="/guide"
-                            element={<CareGuide />}
+                            path="/journey"
+                            element={<PlantJourney userId={session.user.id} />}
                         />
 
                         <Route
-                            path="/about"
-                            element={<About />}
+                            path="/settings"
+                            element={<Settings />}
                         />
                     </Routes>
 
@@ -267,7 +272,7 @@ function App(){
                     )
                 }
             </div>
-        </BrowserRouter>
+        // </BrowserRouter>
     )
 
 }

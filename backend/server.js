@@ -360,6 +360,85 @@ app.patch("/api/conversations/:id", async(req,res)=>{
     }
 });
 
+app.get("/api/journey/stats", async (req, res) => {
+    const { userId } = req.query;
+    const { data: conversations } = await supabase.from("conversations").select("id").eq("user_id", userId);
+    const conversationIds = conversations.map(item => item.id);
+
+    if (conversationIds.length === 0) {
+        return res.json({
+            totalPlants: 0,
+            totalScans: 0,
+            averageHealth: 0
+        });
+    }
+
+    const { data: scans } = await supabase.from("plant_scans").select("health_score").in("conversation_id", conversationIds);
+    const totalScans = scans?.length || 0;
+    const averageHealth = totalScans > 0? Math.round((scans || []).reduce((sum, item) => 
+        sum + (item.health_score || 0), 0) / totalScans) : 0;
+
+    res.json({
+        totalPlants: conversations.length,
+        totalScans,
+        averageHealth
+    });
+});
+
+app.get("/api/journey/list", async (req, res) => {
+    try {
+        const { userId } = req.query;
+        const { data: conversations } = await supabase.from("conversations").select("id, title, created_at")
+            .eq("user_id", userId).order("created_at", { ascending: false });
+
+        if (!conversations || conversations.length === 0) {
+            return res.json([]);
+        }
+
+        const conversationIds = conversations.map((item) => item.id);
+
+        const { data: scans } = await supabase.from("plant_scans").select(`
+            conversation_id,
+            plant_name,
+            health_score,
+            image_url,
+            created_at
+        `).in("conversation_id", conversationIds).order("created_at", { ascending: false });
+
+        const journeys = conversations.map((conversation) => {
+            const relatedScans =scans.filter((scan) =>
+                scan.conversation_id === conversation.id
+            );
+
+            const latestScan = relatedScans[0];
+
+            const averageHealth = relatedScans.length > 0? Math.round(
+                relatedScans.reduce((sum, item) => sum + (item.health_score || 0), 0) / relatedScans.length
+            ) : 0;
+
+            return {
+                id: conversation.id,
+                title:
+                    latestScan?.plant_name ||
+                    conversation.title,
+                scanCount: relatedScans.length,
+                averageHealth,
+                latestImage:
+                    latestScan?.image_url || null
+            };
+        });
+
+        res.json(journeys);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            error: "Failed to fetch journeys"
+        });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`PlantPal backend running on port ${PORT}`);
 });

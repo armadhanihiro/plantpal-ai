@@ -676,19 +676,16 @@ body.dark-body{
 
 .dark .logo,
 .dark .hero h1,
-.dark .guide-page h1,
 .dark .about-page h1{
     color:#eaf3ea;
 }
 
 .dark .hero p,
-.dark .guide-card p,
 .dark .about-intro,
 .dark .about-card p,
 .dark .about-card li,
 .dark .health-status,
-.dark .empty-state li,
-.dark .history-item{
+.dark .empty-state li{
     color:#b8c8b8;
 }
 
@@ -697,8 +694,6 @@ body.dark-body{
 .dark .plant-card,
 .dark .empty-state,
 .dark .result,
-.dark .history-card,
-.dark .guide-card,
 .dark .about-card{
     background:#18261c;
     border-color:#2c3d30;
@@ -748,14 +743,8 @@ body.dark-body{
 .dark .plant-card h3,
 .dark .empty-state h3,
 .dark .result-header,
-.dark .history-card h3,
-.dark .guide-card h3,
 .dark .about-card h3{
     color:#8fd19e;
-}
-
-.dark .history-item{
-    border-bottom-color:#2c3d30;
 }
 
 .dark .footer{
@@ -769,6 +758,52 @@ body.dark-body{
 
 .dark .thinking p{
     color:#8fd19e;
+}
+
+.dark .journey-badge,
+.dark .journey-empty-icon{
+    background:#142219;
+    color:#8fd19e;
+}
+
+.dark .journey-hero h1,
+.dark .journey-empty-card h2{
+    color:#eaf3ea;
+}
+
+.dark .journey-hero p,
+.dark .journey-stat-card span,
+.dark .journey-stat-card p,
+.dark .journey-empty-card p{
+    color:#b8c8b8;
+}
+
+.dark .journey-stat-card,
+.dark .journey-empty-card{
+    background:#18261c;
+    border-color:#2c3d30;
+}
+
+.dark .journey-stat-card strong{
+    color:#8fd19e;
+}
+
+.dark .journey-list h2,
+.dark .plant-journey-card h3{
+    color:#eaf3ea;
+}
+
+.dark .plant-journey-card{
+    background:#18261c;
+    border-color:#2c3d30;
+}
+
+.dark .journey-card-placeholder{
+    background:#142219;
+}
+
+.dark .plant-journey-card p{
+    color:#b8c8b8;
 }
 
 /* HERO */
@@ -1308,34 +1343,6 @@ button:disabled{
     }
 }
 
-/* HISTORY */
-
-.history-card{
-    margin-top:1.25rem;
-    padding:1.25rem;
-    border-radius:20px;
-    background:#f8fcf7;
-    border:1px solid #dfe8dc;
-}
-
-.history-card h3{
-    color:#2f6b3f;
-    margin-bottom:1rem;
-}
-
-.history-item{
-    padding:.75rem;
-    cursor:pointer;
-    border-bottom:1px solid #edf2eb;
-    color:#58705d;
-    transition:.3s;
-}
-
-.history-item:hover{
-    color:#2f6b3f;
-    padding-left:1rem;
-}
-
 /* FOOTER */
 
 .footer{
@@ -1345,54 +1352,155 @@ button:disabled{
     font-size:.9rem;
 }
 
-/* CARE GUIDE */
+/* PLANT JOURNEY PAGE */
 
-.guide-page{
-    width:min(90%,60rem);
+.journey-page{
+    width:min(92%,64rem);
     margin:3rem auto;
+}
+
+.journey-hero{
+    text-align:center;
+    margin-bottom:2rem;
+}
+
+.journey-badge{
+    display:inline-flex;
+    padding:.45rem .85rem;
+    border-radius:999px;
+    background:#e7f5e5;
+    color:#2f6b3f;
+    font-weight:700;
+    font-size:.9rem;
+}
+
+.journey-hero h1{
+    margin:1rem 0 .75rem;
+    color:#173b22;
+    font-size:clamp(2rem,4vw,3rem);
+}
+
+.journey-hero p{
+    max-width:42rem;
+    margin:auto;
+    color:#58705d;
+    line-height:1.7;
+}
+
+.journey-stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1rem;
+    margin-bottom:1.5rem;
+}
+
+.journey-stat-card{
+    background:white;
+    border:1px solid #e6ece3;
+    border-radius:1.25rem;
+    padding:1.25rem;
+    box-shadow:0 8px 20px rgba(0,0,0,.04);
+}
+
+.journey-stat-card span{
+    color:#58705d;
+    font-size:.9rem;
+}
+
+.journey-stat-card strong{
+    display:block;
+    margin:.5rem 0;
+    color:#2f6b3f;
+    font-size:2rem;
+}
+
+.journey-stat-card p{
+    margin:0;
+    color:#7a8a7c;
+    font-size:.9rem;
+}
+
+.journey-empty-card{
+    background:white;
+    border:1px dashed #c8d6c4;
+    border-radius:1.5rem;
+    padding:2rem;
     text-align:center;
 }
 
-.guide-page h1{
+.journey-empty-icon{
+    width:4rem;
+    height:4rem;
+    margin:0 auto 1rem;
+    border-radius:1.25rem;
+    background:#f3faf2;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.8rem;
+}
+
+.journey-empty-card h2{
+    color:#173b22;
+    margin-bottom:.5rem;
+}
+
+.journey-empty-card p{
+    color:#58705d;
+    line-height:1.6;
+}
+
+.journey-list{
+    margin-top:2rem;
+}
+
+.journey-list h2{
     color:#173b22;
     margin-bottom:1rem;
 }
 
-.guide-grid{
+.journey-card-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));
-    gap:1.5rem;
-    margin-top:2rem;
+    grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));
+    gap:1rem;
 }
 
-.guide-card{
+.plant-journey-card{
     background:white;
-    padding:1.5rem;
-    border-radius:1.25rem;
     border:1px solid #e6ece3;
+    border-radius:1.25rem;
+    overflow:hidden;
     box-shadow:0 8px 20px rgba(0,0,0,.04);
-    text-align:left;
 }
 
-.guide-card,
-.history-card{
-    transition:transform .3s ease, box-shadow .3s ease;
+.plant-journey-card img,
+.journey-card-placeholder{
+    width:100%;
+    height:10rem;
+    object-fit:cover;
 }
 
-.guide-card:hover,
-.history-card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 12px 30px rgba(0,0,0,.08);
+.journey-card-placeholder{
+    background:#f3faf2;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:2rem;
 }
 
-.guide-card h3{
-    color:#2f6b3f;
-    margin-bottom:.75rem;
+.plant-journey-card div{
+    padding:1rem;
 }
 
-.guide-card p{
+.plant-journey-card h3{
+    margin:0 0 .4rem;
+    color:#173b22;
+}
+
+.plant-journey-card p{
+    margin:0;
     color:#58705d;
-    line-height:1.7;
+    font-size:.9rem;
 }
 
 /* ABOUT */
@@ -1515,7 +1623,14 @@ button:disabled{
         margin:1.5rem auto 5rem;
     }
 
-    .guide-page,
+    .journey-page{
+        margin:2rem auto;
+    }
+
+    .journey-stats-grid{
+        grid-template-columns:1fr;
+    }
+
     .about-page{
         margin:2rem auto;
     }
