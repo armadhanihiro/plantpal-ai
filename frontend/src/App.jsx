@@ -65,8 +65,11 @@ function App(){
     },[darkMode])
 
     const handleSelectConversation = async (id) => {
-         localStorage.setItem("lastConversationId", id);
+        localStorage.setItem("lastConversationId", id);
+        localStorage.removeItem("isNewChat");
+
         setConversationId(id);
+        
         const data = await getMessages(id);
 
         const formattedMessages = data.map((item) => ({
@@ -78,7 +81,6 @@ function App(){
         setMessages(formattedMessages);
 
         const plant = await getConversationPlant(id);
-        // console.log("RESTORED PLANT:", plant);
 
         if(plant){
             setPlantData({
@@ -111,6 +113,11 @@ function App(){
             const conversations = await refreshConversations();
             const lastConversationId = localStorage.getItem("lastConversationId");
 
+            const isNewChat = localStorage.getItem("isNewChat");
+            if (isNewChat === "true") {
+                return;
+            }
+
             if (lastConversationId) {
                 await handleSelectConversation(lastConversationId);
             }else if (conversations?.length > 0) {
@@ -121,6 +128,9 @@ function App(){
     }, [session]);
 
     const handleNewChat = () => {
+        localStorage.removeItem("lastConversationId");
+        localStorage.setItem("isNewChat", "true");
+
         setConversationId(null);
         setMessages([]);
         setPlantData(null);

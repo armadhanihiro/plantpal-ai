@@ -30,13 +30,13 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
     };
 
     const handleSubmit = async () => {
-        if (!question.trim()) return;
+        if (!question.trim() && !imageFile) return;
 
         setLoading(true);
 
         const userMessage = {
             role:"user", 
-            content:question,
+            content:question.trim() || "Please analyze this plant.",
             image: selectedImage
         };
 
@@ -44,13 +44,18 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
 
         setQuestion("");
 
-        const response = await askPlantAI(question, imageFile, conversationId, userId);
+        const promptText = question.trim() || "Please analyze this plant.";
+
+        const response = await askPlantAI(promptText, imageFile, conversationId, userId);
+        
         setConversationId(response.conversationId);
 
         localStorage.setItem(
             "lastConversationId",
             response.conversationId
         );
+
+        localStorage.removeItem("isNewChat");
 
         await refreshConversations();
 
@@ -162,6 +167,7 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
                                     <label className="chat-upload-btn">
                                         📎
                                         <input
+                                            id="plant-upload"
                                             type="file"
                                             accept="image/*"
                                             onChange={handleImageUpload}

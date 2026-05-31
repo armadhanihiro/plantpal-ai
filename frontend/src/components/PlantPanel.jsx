@@ -1,4 +1,5 @@
 import ImagePreview from "./ImagePreview";
+import JourneyStarter from "./JourneyStarter";
 
 function PlantPanel({ image, plantData }) {
     return (
@@ -12,10 +13,7 @@ function PlantPanel({ image, plantData }) {
                 image ? (
                     <ImagePreview image={image} plantData={plantData}/>
                 ) : (
-                    <div className="plant-panel-empty">
-                        <p>No plant image yet.</p>
-                        <span>Upload a photo to start your plant analysis.</span>
-                    </div>
+                    <JourneyStarter />
                 )
             }
         </aside>
