@@ -257,7 +257,8 @@ body.dark-body{
 /* SIDEBAR */
 
 .sidebar-overlay,
-.sidebar-toggle{
+.sidebar-toggle,
+.sidebar-nav-section{
     display:none;
 }
 
@@ -676,14 +677,14 @@ body.dark-body{
 
 .dark .logo,
 .dark .hero h1,
-.dark .about-page h1{
+.dark .settings-page h1{
     color:#eaf3ea;
 }
 
 .dark .hero p,
-.dark .about-intro,
-.dark .about-card p,
-.dark .about-card li,
+.dark .settings-intro,
+.dark .settings-card p,
+.dark .settings-card li,
 .dark .health-status,
 .dark .empty-state li{
     color:#b8c8b8;
@@ -694,7 +695,7 @@ body.dark-body{
 .dark .plant-card,
 .dark .empty-state,
 .dark .result,
-.dark .about-card{
+.dark .settings-card{
     background:#18261c;
     border-color:#2c3d30;
     color:#eaf3ea;
@@ -743,7 +744,7 @@ body.dark-body{
 .dark .plant-card h3,
 .dark .empty-state h3,
 .dark .result-header,
-.dark .about-card h3{
+.dark .settings-card h3{
     color:#8fd19e;
 }
 
@@ -1503,21 +1504,21 @@ button:disabled{
     font-size:.9rem;
 }
 
-/* ABOUT */
+/* settings */
 
-.about-page{
+.settings-page{
     width:min(90%,50rem);
     margin:3rem auto;
     text-align:center;
 }
 
-.about-intro{
+.settings-intro{
     color:#58705d;
     line-height:1.8;
     margin-bottom:2rem;
 }
 
-.about-card{
+.settings-card{
     background:white;
     padding:1.5rem;
     border-radius:1.25rem;
@@ -1527,19 +1528,36 @@ button:disabled{
     text-align:left;
 }
 
-.about-card h3{
+.settings-card h3{
     color:#2f6b3f;
     margin-bottom:1rem;
 }
 
-.about-card li{
+.settings-card li{
     margin-bottom:.75rem;
     color:#58705d;
+}
+
+@media(min-width:769px){
+    body:has(.journey-page) .conversation-sidebar,
+    body:has(.settings-page) .conversation-sidebar{
+        display:none;
+    }
 }
 
 /* RESPONSIVE */
 
 @media (max-width:768px){
+    body:has(.journey-page) .new-chat-btn,
+    body:has(.journey-page) .conversation-sidebar > h3,
+    body:has(.journey-page) .conversation-list,
+    body:has(.settings-page) .new-chat-btn,
+    body:has(.settings-page) .conversation-sidebar > h3,
+    body:has(.settings-page) .conversation-list{
+        display: none;
+    }
+    
+    
     .auth-page{
         grid-template-columns:1fr;
         padding:1rem;
@@ -1549,18 +1567,99 @@ button:disabled{
         display:none;
     }
 
+    .sidebar-nav-section{
+        display: block;
+        margin:1rem 0;
+        padding-bottom:1rem;
+        border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .sidebar-nav-section h4{
+        margin-bottom:.75rem;
+        font-size:.85rem;
+        color:#94a3b8;
+        opacity:1;
+    }
+
+    .sidebar-nav-link{
+        display:block;
+        padding:.75rem .9rem;
+        margin-bottom:.4rem;
+        border-radius:.75rem;
+        text-decoration:none;
+        color:#cbd5e1;
+        font-weight:600;
+    }
+
+    .sidebar-nav-link:hover{
+        background:rgba(255,255,255,.06);
+    }
+
+    .sidebar-nav-link.active{
+        background:#22c55e;
+        color:#052e16;
+    }
+    
     .navbar{
-        display:none;
+        display: none;
+    }
+
+    .menu-btn{
+        display:flex !important;
+        width:3rem;
+        height:3rem;
+        border:none;
+        border-radius:.9rem;
+        background:#22c55e;
+        color:#052e16;
+        align-items:center;
+        justify-content:center;
+    }
+
+    .nav-links{
+        display:none !important;
+        position:absolute;
+        top:3.6rem;
+        right:0;
+        width:12rem;
+        padding:.75rem;
+        border-radius:1rem;
+        background:#0f172a;
+        border:1px solid rgba(255,255,255,.08);
+        box-shadow:0 18px 40px rgba(0,0,0,.25);
+        flex-direction:column;
+        gap:.4rem;
+    }
+
+    .nav-links.open{
+        display:flex !important;
+    }
+
+    .nav-link{
+        color:#f8fafc;
+        padding:.75rem .9rem;
+        border-radius:.7rem;
+        text-decoration:none;
+    }
+
+    .nav-link.active-link{
+        background:#22c55e;
+        color:#052e16;
+    }
+
+    .mode-btn{
+        width:100%;
+        margin-top:.25rem;
     }
 
     .sidebar-toggle{
-        display:flex;
+        display:flex !important;
         position:fixed;
         top:1rem;
         left:1rem;
-        z-index:1100;
-        width:2.7rem;
-        height:2.7rem;
+        z-index:5000;
+        width:2.6rem;
+        height:2.6rem;
         margin:0;
         padding:0;
         align-items:center;
@@ -1570,22 +1669,44 @@ button:disabled{
         background:#22c55e;
         color:white;
         font-size:1.2rem;
-        cursor:pointer;
     }
 
     .conversation-sidebar{
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
         position:fixed;
         top:0;
         left:-100%;
         z-index:1000;
         width:16rem;
         max-width:75vw;
-        min-height:100vh;
+        height:100vh;
         transition:.3s ease;
     }
 
     .conversation-sidebar.sidebar-open{
         left:0;
+    }
+
+    .sidebar-brand,
+    .sidebar-nav-section,
+    .new-chat-btn,
+    .conversation-sidebar > h3,
+    .sidebar-footer{
+        flex-shrink:0;
+    }
+
+    .conversation-list{
+        flex:1;
+        min-height:0;
+        overflow-y:auto;
+        padding-right:.25rem;
+    }
+
+    .conversation-row{
+        min-height:2.6rem;
     }
 
     .sidebar-overlay{
@@ -1620,19 +1741,21 @@ button:disabled{
     .card{
         width:92%;
         padding:1.25rem;
-        margin:1.5rem auto 5rem;
+        margin:1.5rem auto 6rem;
     }
 
     .journey-page{
         margin:2rem auto;
+        padding-bottom: 6rem;
     }
 
     .journey-stats-grid{
         grid-template-columns:1fr;
     }
 
-    .about-page{
+    .settings-page{
         margin:2rem auto;
+        padding-bottom: 6rem;
     }
 }
 

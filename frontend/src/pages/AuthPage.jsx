@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Leaf, Sparkles, Sprout } from "lucide-react";
 import { supabase } from "../services/supabaseClient";
+// import { redirect } from "react-router-dom";
 
 function AuthPage() {
     const [email, setEmail] = useState("");
@@ -62,10 +63,11 @@ function AuthPage() {
     };
 
     const handleGoogleLogin = async () => {
+        const redirectUrl = window.location.origin;
         await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: import.meta.env.PROD? "https://plantpal-ai-xi.vercel.app": window.location.origin
+                redirectTo: redirectUrl
             }
         });
     };

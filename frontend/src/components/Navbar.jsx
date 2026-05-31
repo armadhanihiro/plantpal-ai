@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react";
+// import { Menu, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
@@ -6,14 +6,6 @@ function Navbar({darkMode, setDarkMode}) {
     const [menuOpen,setMenuOpen] = useState(false);
     return (
         <nav className="navbar">
-
-            <button className="menu-btn" onClick={()=> setMenuOpen(!menuOpen)}>
-                {
-                    menuOpen
-                    ?<X size={24}/>
-                    :<Menu size={24}/>
-                }
-            </button>
 
             <div className={menuOpen ?"nav-links open" :"nav-links"}>
                 <NavLink 

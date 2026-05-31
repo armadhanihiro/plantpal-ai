@@ -1,5 +1,6 @@
 import { Leaf } from "lucide-react";
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 function ConversationSidebar({user, conversations, activeConversationId, onSelectConversation, onNewChat, 
              onRenameConversation, setDeleteTarget, onLogout, sidebarOpen, setSidebarOpen}) {
@@ -18,6 +19,34 @@ function ConversationSidebar({user, conversations, activeConversationId, onSelec
                     <h2>PlantPal AI</h2>
                     <p>Your AI Plant Care Assistant</p>
                 </div>
+            </div>
+
+            <div className="sidebar-nav-section">
+                <h4>Navigation</h4>
+
+                <NavLink
+                    to="/"
+                    className="sidebar-nav-link"
+                    onClick={() => setSidebarOpen(false)}
+                >
+                    💬 Chat
+                </NavLink>
+
+                <NavLink
+                    to="/journey"
+                    className="sidebar-nav-link"
+                    onClick={() => setSidebarOpen(false)}
+                >
+                    🌱 Journey
+                </NavLink>
+
+                <NavLink
+                    to="/settings"
+                    className="sidebar-nav-link"
+                    onClick={() => setSidebarOpen(false)}
+                >
+                    ⚙️ Settings
+                </NavLink>
             </div>
 
             <button

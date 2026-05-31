@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Navbar from "./components/Navbar";
@@ -24,9 +24,6 @@ function App(){
         ) || false;
 
     });
-
-    const location = useLocation();
-    const showConversationSidebar = location.pathname === "/";
 
     const [session, setSession] = useState(null);
     const [authLoading, setAuthLoading] = useState(true);
@@ -182,97 +179,98 @@ function App(){
     }
 
     return(
-        // <BrowserRouter>
-            <div className="app-layout">
+        <div className="app-layout">
 
-                <button className="sidebar-toggle" onClick={() => setSidebarOpen(prev => !prev)}>☰</button>
+            <button
+                className="sidebar-toggle"
+                onClick={() => setSidebarOpen(prev => !prev)}
+            >
+                ☰
+            </button>
 
-                {
-                    sidebarOpen && (
-                        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}/>
-                    )
-                }
+            {
+                sidebarOpen && (
+                    <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}/>
+                )
+            }
 
-                {showConversationSidebar && (
-                    <ConversationSidebar
-                        user={session?.user}
-                        conversations={conversations}
-                        activeConversationId={conversationId}
-                        onSelectConversation={handleSelectConversation}
-                        onNewChat={handleNewChat}
-                        onDeleteConversation={handleDeleteConversation}
-                        onRenameConversation={handleRenameConversation}
-                        setDeleteTarget={setDeleteTarget}
-                        onLogout={handleLogout}
-                        sidebarOpen={sidebarOpen}
-                        setSidebarOpen={setSidebarOpen}
+                <ConversationSidebar
+                    user={session?.user}
+                    conversations={conversations}
+                    activeConversationId={conversationId}
+                    onSelectConversation={handleSelectConversation}
+                    onNewChat={handleNewChat}
+                    onDeleteConversation={handleDeleteConversation}
+                    onRenameConversation={handleRenameConversation}
+                    setDeleteTarget={setDeleteTarget}
+                    onLogout={handleLogout}
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                />
+
+            <div className={darkMode ? "app dark" : "app"}>
+                <Navbar
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                />
+                
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <Home
+                                userId={session.user.id}
+                                conversationId={conversationId}
+                                setConversationId={setConversationId}
+                                messages={messages}
+                                setMessages={setMessages}
+                                refreshConversations={refreshConversations}
+                                plantData={plantData}
+                                setPlantData={setPlantData}
+                                image={image}
+                                setImage={setImage}
+                            />
+                        }
                     />
-                )}
 
-                <div className={darkMode ? "app dark" : "app"}>
-                    <Navbar
-                        darkMode={darkMode}
-                        setDarkMode={setDarkMode}
+                    <Route
+                        path="/journey"
+                        element={<PlantJourney userId={session.user.id} />}
                     />
 
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={
-                                <Home
-                                    userId={session.user.id}
-                                    conversationId={conversationId}
-                                    setConversationId={setConversationId}
-                                    messages={messages}
-                                    setMessages={setMessages}
-                                    refreshConversations={refreshConversations}
-                                    plantData={plantData}
-                                    setPlantData={setPlantData}
-                                    image={image}
-                                    setImage={setImage}
-                                />
-                            }
-                        />
+                    <Route
+                        path="/settings"
+                        element={<Settings />}
+                    />
+                </Routes>
+            </div>
 
-                        <Route
-                            path="/journey"
-                            element={<PlantJourney userId={session.user.id} />}
-                        />
+            {
+                deleteTarget && (
+                    <div className="delete-modal-backdrop">
+                        <div className="delete-modal">
+                            <h3>Delete conversation?</h3>
 
-                        <Route
-                            path="/settings"
-                            element={<Settings />}
-                        />
-                    </Routes>
+                            <p>
+                                This will permanently delete
+                                <strong> {deleteTarget.title || "Untitled Plant Chat"} </strong>
+                                from your history.
+                            </p>
 
-                </div>
-                {
-                    deleteTarget && (
-                        <div className="delete-modal-backdrop">
-                            <div className="delete-modal">
-                                <h3>Delete conversation?</h3>
+                            <div className="delete-modal-actions">
+                                <button className="cancel-delete-btn" onClick={() => setDeleteTarget(null)}>
+                                    Cancel
+                                </button>
 
-                                <p>
-                                    This will permanently delete
-                                    <strong> {deleteTarget.title || "Untitled Plant Chat"} </strong>
-                                    from your history.
-                                </p>
-
-                                <div className="delete-modal-actions">
-                                    <button className="cancel-delete-btn" onClick={() => setDeleteTarget(null)}>
-                                        Cancel
-                                    </button>
-
-                                    <button className="confirm-delete-btn" onClick={confirmDeleteConversation}>
-                                        Delete
-                                    </button>
-                                </div>
+                                <button className="confirm-delete-btn" onClick={confirmDeleteConversation}>
+                                    Delete
+                                </button>
                             </div>
                         </div>
-                    )
-                }
-            </div>
-        // </BrowserRouter>
+                    </div>
+                )
+            }
+        </div>
     )
 
 }
