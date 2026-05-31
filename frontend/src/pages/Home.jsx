@@ -31,6 +31,7 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
 
     const handleSubmit = async () => {
         if (!question.trim() && !imageFile) return;
+        const promptText = question.trim() || "Please analyze this plant.";
 
         setLoading(true);
 
@@ -43,8 +44,6 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
         setMessages(prev => [...prev, userMessage]);
 
         setQuestion("");
-
-        const promptText = question.trim() || "Please analyze this plant.";
 
         const response = await askPlantAI(promptText, imageFile, conversationId, userId);
         
