@@ -401,13 +401,17 @@ app.get("/api/journey/stats", async (req, res) => {
         });
     }
 
-    const { data: scans } = await supabase.from("plant_scans").select("health_score").in("conversation_id", conversationIds);
+    const { data: scans } = await supabase.from("plant_scans").select("conversation_id, health_score").in("conversation_id", conversationIds);
     const totalScans = scans?.length || 0;
     const averageHealth = totalScans > 0? Math.round((scans || []).reduce((sum, item) => 
         sum + (item.health_score || 0), 0) / totalScans) : 0;
 
+    const plantConversationIds = new Set(
+        (scans || []).map((scan) => scan.conversation_id)
+    );
+
     res.json({
-        totalPlants: conversations.length,
+        totalPlants: plantConversationIds.size,
         totalScans,
         averageHealth
     });
@@ -434,27 +438,30 @@ app.get("/api/journey/list", async (req, res) => {
         `).in("conversation_id", conversationIds).order("created_at", { ascending: false });
 
         const journeys = conversations.map((conversation) => {
-            const relatedScans =scans.filter((scan) =>
+            const relatedScans = scans.filter((scan) =>
                 scan.conversation_id === conversation.id
             );
 
-            const latestScan = relatedScans[0];
+            if (relatedScans.length === 0) {
+                return null;
+            }
 
-            const averageHealth = relatedScans.length > 0? Math.round(
-                relatedScans.reduce((sum, item) => sum + (item.health_score || 0), 0) / relatedScans.length
-            ) : 0;
+            const latestScan = relatedScans[0];
+            const averageHealth = Math.round(
+                relatedScans.reduce(
+                    (sum, item) => sum + (item.health_score || 0),
+                    0
+                ) / relatedScans.length
+            );
 
             return {
                 id: conversation.id,
-                title:
-                    latestScan?.plant_name ||
-                    conversation.title,
+                title: latestScan?.plant_name || conversation.title,
                 scanCount: relatedScans.length,
                 averageHealth,
-                latestImage:
-                    latestScan?.image_url || null
+                latestImage: latestScan?.image_url || null
             };
-        });
+        }).filter(Boolean);
 
         res.json(journeys);
 

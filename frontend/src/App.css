@@ -1533,9 +1533,38 @@ button:disabled{
     margin-bottom:1rem;
 }
 
+.settings-card ul{
+    list-style:none;
+    padding:0;
+    margin-top:1rem;
+}
+
 .settings-card li{
     margin-bottom:.75rem;
-    color:#58705d;
+    padding:.55rem 0;
+    color:#334155;
+}
+
+.setting-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+
+    padding:.75rem 0;
+    border-bottom:1px solid rgba(0,0,0,.08);
+}
+
+.setting-row:last-child{
+    border-bottom:none;
+}
+
+.setting-row span{
+    color:#64748b;
+}
+
+.setting-row strong{
+    color:#14532d;
 }
 
 @media(min-width:769px){

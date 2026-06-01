@@ -240,7 +240,7 @@ function App(){
 
                     <Route
                         path="/settings"
-                        element={<Settings />}
+                        element={<Settings user={session.user} />}
                     />
                 </Routes>
             </div>

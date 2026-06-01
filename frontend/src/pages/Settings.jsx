@@ -1,29 +1,56 @@
-function About() {
+function Settings({ user }) {
     return (
         <div className="settings-page">
-            <h1>About PlantPal 🌱</h1>
-            <p className="about-intro">
-                PlantPal AI is designed to help plant lovers
-                understand and care for their plants through
-                a simple and friendly experience.
+            <h1>Settings ⚙️</h1>
+
+            <p className="settings-intro">
+                Manage your PlantPal AI experience.
             </p>
+
             <div className="settings-card">
-                <h3>Our Mission</h3>
-                <p>Make plant care easier and more accessible with smart technology.</p>
+                <h3>Account</h3>
+                <div className="setting-row">
+                    <span>Email</span>
+                    <strong>{user?.email}</strong>
+                </div>
             </div>
+
+
             <div className="settings-card">
-                <h3>Current Features</h3>
+                <h3>PlantPal AI 🌱</h3>
+                <div className="setting-row">
+                    <span>Version</span>
+                    <strong>1.1.0</strong>
+                </div>
+
+                <div className="setting-row">
+                    <span>Status</span>
+                    <strong>Active</strong>
+                </div>
+            </div>
+
+
+            <div className="settings-card">
+                <h3>Features</h3>
                 <ul>
-                    <li>Upload plant images</li>
-                    <li>Plant health score</li>
-                    <li>Plant information</li>
-                    <li>Care guide tips</li>
-                    <li>Question history</li>
+                    <li>🌱 AI Plant Detection</li>
+                    <li>💬 Smart Plant Chat</li>
+                    <li>📊 Health Analysis</li>
+                    <li>🪴 Plant Journey</li>
+                    <li>🛡️ Non-plant Image Protection</li>
                 </ul>
             </div>
 
+
+            <div className="settings-card">
+                <h3>About</h3>
+                <p>
+                    PlantPal AI is your personal plant companion,
+                    helping you understand, track, and care for your plants.
+                </p>
+            </div>
         </div>
     );
 }
 
-export default About;
+export default Settings;
