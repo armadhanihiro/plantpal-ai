@@ -57,28 +57,42 @@ app.post("/api/analyze", async (req, res) => {
 
             Analyze the plant image if provided and answer the user's question.
 
-            Answer style:
-            - Be clear and concise.
-            - Use short bullet points when helpful.
-            - Avoid long paragraphs.
-            - Do not give medical or chemical advice.
-            - If the question is unclear, ask for more details.
-            - Keep the tone friendly and supportive.
+            First, determine whether the uploaded image contains a real plant.
 
-            Return ONLY valid JSON with this format:
+            Return ONLY valid JSON with this exact format:
+
             {
+                "isPlant": true,
                 "answer": "short plant care answer",
-                "healthScore": 0-100,
+                "healthScore": 0,
                 "plantName": "most likely plant name",
                 "watering": "Low/Medium/High",
                 "sunlight": "Direct/Indirect/Low Light",
                 "difficulty": "Easy/Medium/Hard"
             }
 
+            If the uploaded image does NOT contain a plant, return ONLY this format:
+
+            {
+                "isPlant": false,
+                "answer": "I couldn't detect a plant in this image. Please upload a clear photo of a plant so I can help you.",
+                "healthScore": null,
+                "plantName": null,
+                "watering": null,
+                "sunlight": null,
+                "difficulty": null
+            }
+
             Rules:
-            - If an image is provided, always try to identify the plant.
-            - If uncertain, use "Likely ..." instead of "Unknown Plant".
-            - Keep the answer clear and concise.
+            - If the image does not contain a plant, do not guess a plant.
+            - If the image contains objects, animals, people, food, or anything unrelated to plants, set isPlant to false.
+            - If an image is provided and contains a plant, always try to identify the plant.
+            - If uncertain about the plant species, use "Likely ..." instead of "Unknown Plant".
+            - Be clear and concise.
+            - Use short bullet points when helpful.
+            - Avoid long paragraphs.
+            - Do not give medical or chemical advice.
+            - Keep the tone friendly and supportive.
 
             User question:
             ${question}
@@ -152,14 +166,6 @@ app.post("/api/analyze", async (req, res) => {
 
             const parsed = JSON.parse(cleanText);
 
-            await supabase.from("messages").insert([
-                {
-                    conversation_id: activeConversationId,
-                    role:"assistant",
-                    content:parsed.answer
-                }
-            ]);
-
         } catch(aiError){
             console.error(
                 "Gemini Error:",
@@ -202,6 +208,28 @@ app.post("/api/analyze", async (req, res) => {
                 difficulty: "Unknown"
             };
         }
+
+        if (!parsed.isPlant) {
+            await supabase.from("messages").insert([
+                {
+                    conversation_id: activeConversationId,
+                    role:"assistant",
+                    content:parsed.answer
+                }
+            ]);
+
+            return res.json({
+                answer: parsed.answer,
+                isPlant:false,
+                healthScore:null,
+                plantName:null,
+                watering:null,
+                sunlight:null,
+                difficulty:null,
+                conversationId: activeConversationId
+            });
+        }
+
         const { data, error } = await supabase.from("plant_scans").insert([
             {
                 conversation_id: activeConversationId,
