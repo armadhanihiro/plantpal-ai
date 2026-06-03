@@ -15,6 +15,8 @@ import "../App.css";
 function Home({userId, conversationId, setConversationId, messages, setMessages, refreshConversations, plantData, setPlantData, image, setImage}) {
     const [imageFile, setImageFile] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [pendingDifferentPlant, setPendingDifferentPlant] = useState(null);
+    const [creatingJourney, setCreatingJourney] = useState(false);
     const [question, setQuestion] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
@@ -46,6 +48,36 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
         setQuestion("");
 
         const response = await askPlantAI(promptText, imageFile, conversationId, userId);
+
+        if (response.isError) {
+            const assistantMessage = {
+                role: "assistant",
+                content: response.answer
+            };
+
+            setMessages(prev => [...prev, assistantMessage]);
+            setLoading(false);
+            return;
+        }
+
+        if (response.isDifferentPlant) {
+            setPendingDifferentPlant({
+                question: promptText,
+                imageFile,
+                imagePreview: selectedImage,
+                plantName: response.plantName,
+                currentPlantName: response.currentPlantName
+            });
+
+            const assistantMessage = {
+                role: "assistant",
+                content: response.answer
+            };
+
+            setMessages(prev => [...prev, assistantMessage]);
+            setLoading(false);
+            return;
+        }
         
         setConversationId(response.conversationId);
 
@@ -190,6 +222,99 @@ function Home({userId, conversationId, setConversationId, messages, setMessages,
 
                             <PlantPanel image={image} plantData={plantData}/>
                         </div>
+                        {
+                            pendingDifferentPlant && (
+                                <div className="different-plant-modal">
+                                    <div className="different-plant-card">
+                                        <h3>New plant detected 🌱</h3>
+                                        <p>
+                                            This looks like a new plant.
+                                            Your current journey is tracking{" "}
+                                            <strong>{pendingDifferentPlant.currentPlantName}</strong>.
+                                        </p>
+
+                                        <p>
+                                            Create a new journey to track this plant separately.
+                                        </p>
+
+                                        <div className="different-plant-actions">
+                                            <button onClick={() => {
+                                                setPendingDifferentPlant(null);
+                                            }}>
+                                                Cancel
+                                            </button>
+
+
+                                            <button className="start-new-journey-btn" disabled={creatingJourney} onClick={async () => {
+                                                const pending = pendingDifferentPlant;
+                                                setCreatingJourney(true);
+                                                setLoading(true);
+
+                                                setConversationId(null);
+                                                setMessages([]);
+                                                setPlantData(null);
+                                                setImage(null);
+
+                                                const response = await askPlantAI(
+                                                    pending.question,
+                                                    pending.imageFile,
+                                                    null,
+                                                    userId
+                                                );
+
+                                                setConversationId(response.conversationId);
+
+                                                localStorage.setItem(
+                                                    "lastConversationId",
+                                                    response.conversationId
+                                                );
+
+                                                localStorage.removeItem("isNewChat");
+
+
+                                                setMessages([
+                                                    {
+                                                        role:"user",
+                                                        content:pending.question,
+                                                        image:pending.imagePreview
+                                                    },
+                                                    {
+                                                        role:"assistant",
+                                                        content:response.answer
+                                                    }
+                                                ]);
+
+
+                                                setPlantData({
+                                                    healthScore:response.healthScore,
+                                                    plantName:response.plantName,
+                                                    watering:response.watering,
+                                                    sunlight:response.sunlight,
+                                                    difficulty:response.difficulty
+                                                });
+
+
+                                                if(response.imageUrl){
+                                                    setImage(response.imageUrl);
+                                                }
+
+
+                                                setImageFile(null);
+                                                setSelectedImage(null);
+
+                                                await refreshConversations();
+
+                                                setCreatingJourney(false);
+                                                setPendingDifferentPlant(null);
+                                                setLoading(false);
+                                            }}>
+                                                {creatingJourney ? "Creating journey..." : "Create Plant Journey"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
                     </main>
 
                     <Footer />

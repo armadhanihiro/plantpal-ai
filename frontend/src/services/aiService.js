@@ -96,6 +96,10 @@ export async function getConversationPlant(conversationId){
     try{
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/conversation-plant/${conversationId}`);
 
+        if (response.status === 404) {
+            return null;
+        }
+        
         if (!response.ok) {
             return null;
         }

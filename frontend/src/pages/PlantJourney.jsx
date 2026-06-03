@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import { getJourneyStats, getPlantJourneys } from "../services/journeyService";
 
 function PlantJourney({userId}) {
@@ -61,26 +63,29 @@ function PlantJourney({userId}) {
 
                         <div className="journey-card-grid">
                             {journeys.map((journey) => (
-                                <div className="plant-journey-card" key={journey.id}>
-                                    {journey.latestImage ? (
-                                        <img
-                                            src={journey.latestImage}
-                                            alt={journey.title}
-                                        />
-                                    ) : (
-                                        <div className="journey-card-placeholder">
-                                            🌱
+                                <Link
+                                    to={`/journey/${journey.id}`}
+                                    className="journey-card-link"
+                                    key={journey.id}
+                                >
+                                    <div className="plant-journey-card" key={journey.id}>
+                                        {journey.latestImage ? (
+                                            <img
+                                                src={journey.latestImage}
+                                                alt={journey.title}
+                                            />
+                                        ) : (
+                                            <div className="journey-card-placeholder">
+                                                🌱
+                                            </div>
+                                        )}
+
+                                        <div>
+                                            <h3>{journey.title}</h3>
+                                            <p>{journey.scanCount} scans · Avg health {journey.averageHealth}%</p>
                                         </div>
-                                    )}
-
-                                    <div>
-                                        <h3>{journey.title}</h3>
-
-                                        <p>
-                                            {journey.scanCount} scans · Avg health {journey.averageHealth}%
-                                        </p>
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     </section>

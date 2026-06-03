@@ -9,6 +9,7 @@ import { supabase } from "./services/supabaseClient";
 import AuthPage from "./pages/AuthPage";
 import Home from "./pages/Home";
 import PlantJourney from "./pages/PlantJourney";
+import JourneyDetail from "./pages/JourneyDetail";
 import Settings from "./pages/Settings";
 
 import {getConversations, getMessages, getConversationPlant, deleteConversation, renameConversation} from "./services/aiService";
@@ -65,6 +66,8 @@ function App(){
     },[darkMode])
 
     const handleSelectConversation = async (id) => {
+        if (!id || id === "undefined" || id === "null") return;
+        
         localStorage.setItem("lastConversationId", id);
         localStorage.removeItem("isNewChat");
 
@@ -118,7 +121,7 @@ function App(){
                 return;
             }
 
-            if (lastConversationId) {
+            if (lastConversationId && lastConversationId !== "undefined" && lastConversationId !== "null") {
                 await handleSelectConversation(lastConversationId);
             }else if (conversations?.length > 0) {
                 await handleSelectConversation(conversations[0].id);
@@ -241,6 +244,11 @@ function App(){
                     <Route
                         path="/settings"
                         element={<Settings user={session.user} />}
+                    />
+
+                    <Route
+                        path="/journey/:id"
+                        element={<JourneyDetail />}
                     />
                 </Routes>
             </div>

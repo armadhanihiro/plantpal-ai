@@ -23,15 +23,32 @@ const supabase = createClient(
     process.env.SUPABASE_KEY
 );
 
+async function generateWithRetry(model, messageParts, retries = 3) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            return await model.generateContent(messageParts);
+        } catch (error) {
+            const isTemporaryError = error.status === 503 || error.status === 429;
+            if (!isTemporaryError || attempt === retries) {
+                throw error;
+            }
+            await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+        }
+    }
+}
+
 app.get("/", (req, res) => {
     res.send("PlantPal backend is running 🌱");
 });
 
 app.post("/api/analyze", async (req, res) => {
+    let activeConversationId = null;
+    let createdNewConversation = false;
     try {
         const { question, imageBase64, mimeType, conversationId, userId } = req.body;
-        let activeConversationId = conversationId;
-        let createdNewConversation = false;
+
+        activeConversationId = conversationId
+
         if(!activeConversationId){
             const {data:newConversation, error:conversationError} = await supabase.from("conversations").insert([
                 {
@@ -50,6 +67,14 @@ app.post("/api/analyze", async (req, res) => {
                 createdNewConversation = true;
         }
 
+        let currentPlantName = null;
+        if (activeConversationId) {
+            const { data: latestPlant } = await supabase.from("plant_scans").select("plant_name")
+                .eq("conversation_id", activeConversationId).order("created_at", { ascending: false }).limit(1).single();
+
+            currentPlantName = latestPlant?.plant_name || null;
+        }
+
         const prompt = `
             You are PlantPal AI, a friendly plant care assistant.
 
@@ -63,8 +88,9 @@ app.post("/api/analyze", async (req, res) => {
 
             {
                 "isPlant": true,
+                "isSamePlant": true,
                 "answer": "short plant care answer",
-                "healthScore": 0,
+                "healthScore": 95,
                 "plantName": "most likely plant name",
                 "watering": "Low/Medium/High",
                 "sunlight": "Direct/Indirect/Low Light",
@@ -75,6 +101,7 @@ app.post("/api/analyze", async (req, res) => {
 
             {
                 "isPlant": false,
+                "isSamePlant": null,
                 "answer": "I couldn't detect a plant in this image. Please upload a clear photo of a plant so I can help you.",
                 "healthScore": null,
                 "plantName": null,
@@ -83,11 +110,28 @@ app.post("/api/analyze", async (req, res) => {
                 "difficulty": null
             }
 
+            Current journey plant:
+            ${currentPlantName || "No plant has been identified in this journey yet."}
+
+            Rules for isSamePlant:
+            - If Current journey plant is empty, set isSamePlant to true.
+            - If the uploaded image appears to be the same plant species as the current journey plant, set isSamePlant to true.
+            - If the uploaded image appears to be a different plant species, set isSamePlant to false.
+            - If unsure, set isSamePlant to true to avoid interrupting the user.
+
             Rules:
             - If the image does not contain a plant, do not guess a plant.
             - If the image contains objects, animals, people, food, or anything unrelated to plants, set isPlant to false.
             - If an image is provided and contains a plant, always try to identify the plant.
             - If uncertain about the plant species, use "Likely ..." instead of "Unknown Plant".
+
+            - healthScore must represent estimated plant health from 0 to 100.
+            - A healthy looking plant should usually have healthScore between 80 and 100.
+            - A plant with minor problems should usually have healthScore between 50 and 79.
+            - A dying or severely damaged plant should usually have healthScore below 50.
+            - Return healthScore only as a number.
+            - Never return percentage symbols, text, fractions, or 1-10 scale.
+
             - Be clear and concise.
             - Use short bullet points when helpful.
             - Avoid long paragraphs.
@@ -148,23 +192,12 @@ app.post("/api/analyze", async (req, res) => {
             }
         }
 
-        await supabase.from("messages").insert([
-            {
-                conversation_id: activeConversationId,
-                role:"user",
-                content:question,
-                image_url:imageUrl
-            }
-        ]);
-
         let text = "";
         try{
-            const result = await chat.sendMessage(messageParts);
+            const result = await generateWithRetry(model, messageParts);
             text = result.response.text();
 
             const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-
-            const parsed = JSON.parse(cleanText);
 
         } catch(aiError){
             console.error(
@@ -181,12 +214,38 @@ app.post("/api/analyze", async (req, res) => {
             ]);
             return res.status(500).json({
                 answer: "PlantPal AI is currently busy 🌱 Please try again in a moment.",
-                healthScore:0,
-                plantName: "Unknown Plant",
-                watering: "Unknown",
-                sunlight: "Unknown",
-                difficulty: "Unknown"
+                isError: true,
+                isPlant: false,
+                healthScore: null,
+                plantName: null,
+                watering: null,
+                sunlight: null,
+                difficulty: null,
+                imageUrl: null,
+                conversationId: activeConversationId
             });
+        }
+
+        function normalizeHealthScore(value) {
+            if (value === null || value === undefined) return null;
+
+            if (typeof value === "number") {
+                if (value <= 10) return Math.round(value * 10);
+                return Math.min(100, Math.max(0, Math.round(value)));
+            }
+
+            if (typeof value === "string") {
+                const match = value.match(/\d+/);
+                if (!match) return null;
+
+                const number = Number(match[0]);
+
+                if (number <= 10) return number * 10;
+
+                return Math.min(100, Math.max(0, number));
+            }
+
+            return null;
         }
 
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
@@ -195,19 +254,39 @@ app.post("/api/analyze", async (req, res) => {
 
         try {
             parsed = JSON.parse(cleanedText);
+            parsed.healthScore = normalizeHealthScore(parsed.healthScore);
         } catch (parseError) {
             console.error("JSON parse error:", parseError);
             console.error("Raw text:", text);
 
             parsed = {
-                answer: text,
-                healthScore: 0,
-                plantName: "Unknown Plant",
-                watering: "Unknown",
-                sunlight: "Unknown",
-                difficulty: "Unknown"
+                isError: true,
+                isPlant: false,
+                answer: "PlantPal AI had trouble understanding the response. Please try again.",
+                healthScore: null,
+                plantName: null,
+                watering: null,
+                sunlight: null,
+                difficulty: null
             };
+
+            if (parsed.isError) {
+                await supabase.from("messages").insert([
+                    {
+                        conversation_id: activeConversationId,
+                        role: "assistant",
+                        content: parsed.answer
+                    }
+                ]);
+
+                return res.status(500).json({
+                    ...parsed,
+                    imageUrl: null,
+                    conversationId: activeConversationId
+                });
+            }
         }
+        
 
         if (!parsed.isPlant) {
             await supabase.from("messages").insert([
@@ -230,6 +309,36 @@ app.post("/api/analyze", async (req, res) => {
             });
         }
 
+        if (activeConversationId && currentPlantName && parsed.isSamePlant === false) {
+            const warningMessage = `This looks like a different plant from your current ${currentPlantName} journey.`;
+
+            return res.json({
+                ...parsed,
+                answer: warningMessage,
+                isDifferentPlant: true,
+                currentPlantName,
+                imageUrl: null,
+                conversationId: activeConversationId
+            });
+        }
+
+        await supabase.from("messages").insert([
+            {
+                conversation_id: activeConversationId,
+                role:"user",
+                content:question,
+                image_url:imageUrl
+            }
+        ]);
+
+        await supabase.from("messages").insert([
+            {
+                conversation_id: activeConversationId,
+                role: "assistant",
+                content: parsed.answer
+            }
+        ]);
+
         const { data, error } = await supabase.from("plant_scans").insert([
             {
                 conversation_id: activeConversationId,
@@ -242,6 +351,10 @@ app.post("/api/analyze", async (req, res) => {
                 image_url: imageUrl
             }
         ]).select();
+
+        await supabase.from("conversations").update({
+            title: parsed.plantName?.slice(0, 35)
+        }).eq("id", activeConversationId);
 
         res.json({...parsed, imageUrl, conversationId:activeConversationId});
     } catch (error) {
@@ -332,12 +445,27 @@ app.get("/api/conversation-plant/:id", async(req,res)=>{
             {
                 ascending:false
             }
-        ).limit(1).single();
+        ).limit(1).maybeSingle();
 
-        if(error){
-            return res.status(404).json(null);
+        // database/query error
+        if (error) {
+            console.error(
+                "Conversation plant error:",
+                error
+            );
+
+            return res.status(500).json({
+                error: error.message
+            });
         }
-        res.json(data);
+
+        // conversation exists but no plant scan yet
+        if (!data) {
+            return res.json(null);
+        }
+
+        // latest plant scan
+        return res.json(data);
     }catch(error){
         console.error(error);
         res.status(500).json({
@@ -472,6 +600,21 @@ app.get("/api/journey/list", async (req, res) => {
             error: "Failed to fetch journeys"
         });
     }
+});
+
+app.get("/api/journey/:id", async(req,res)=>{
+
+    const { id } = req.params;
+
+    const { data: scans, error } = await supabase.from("plant_scans").select("*")
+                .eq("conversation_id", id).order("created_at", {ascending:false});
+
+    if(error){
+        return res.status(500).json({
+            error:error.message
+        });
+    }
+    res.json(scans);
 });
 
 app.listen(PORT, () => {

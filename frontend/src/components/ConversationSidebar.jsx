@@ -56,10 +56,10 @@ function ConversationSidebar({user, conversations, activeConversationId, onSelec
                     setSidebarOpen(false);
                 }}
             >
-                + New Chat
+                + New Plant
             </button>
 
-            <h3>Conversations</h3>
+            <h3>My Plants </h3>
 
             <div className="conversation-list">
                 {

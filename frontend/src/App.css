@@ -1053,6 +1053,47 @@ body.dark-body{
     border-radius:20px;
 }
 
+/* CHECK DIFFERENT PLANT */
+
+.different-plant-modal{
+    position:fixed;
+    inset:0;
+    z-index:6000;
+    background:rgba(0,0,0,.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:1rem;
+}
+
+.different-plant-card{
+    width:min(92%,26rem);
+    background:white;
+    border-radius:1.25rem;
+    padding:1.5rem;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+
+.different-plant-card h3{
+    margin-top:0;
+    color:#14532d;
+}
+
+.different-plant-actions{
+    display:flex;
+    gap:.75rem;
+    margin-top:1rem;
+}
+
+.different-plant-actions button{
+    flex:1;
+}
+
+.start-new-journey-btn{
+    background:#22c55e;
+    color:#052e16;
+}
+
 /* HEALTH CARD */
 
 .health-card{
@@ -1094,11 +1135,21 @@ body.dark-body{
 .info-row{
     display:flex;
     justify-content:space-between;
-    padding:.75rem 0;
+    align-items: flex-start;
+    gap: 1rem;
+    padding:.8rem 0;
     border-bottom:1px solid #edf2eb;
 }
 
+.info-row span:first-child{
+    flex-shrink:0;
+}
+
 .info-row span:last-child{
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+    line-height: 1.3;
     font-weight:600;
     color:#2f6b3f;
 }
@@ -1489,6 +1540,11 @@ button:disabled{
     font-size:2rem;
 }
 
+.journey-card-link{
+    text-decoration:none;
+    color:inherit;
+}
+
 .plant-journey-card div{
     padding:1rem;
 }
@@ -1504,7 +1560,157 @@ button:disabled{
     font-size:.9rem;
 }
 
-/* settings */
+/* JOURNEY DETAIL PAGE */
+
+.journey-detail-page{
+    max-width:800px;
+    margin:4rem auto;
+}
+
+.journey-detail-hero{
+    text-align:center;
+    margin-bottom:3rem;
+}
+
+.timeline{
+    position:relative;
+}
+
+.timeline-item{
+    position:relative;
+    padding-left:3rem;
+    margin-bottom:2rem;
+}
+
+.timeline-item::before{
+    content:"";
+    position:absolute;
+    left:.55rem;
+    top:1rem;
+    height:100%;
+    width:2px;
+    background:#bbf7d0;
+}
+
+.timeline-dot{
+    position:absolute;
+    left:0;
+    top:.8rem;
+
+    width:1rem;
+    height:1rem;
+    border-radius:50%;
+    background:#22c55e;
+}
+
+.timeline-card{
+    background:white;
+    padding:1.5rem;
+    border-radius:1rem;
+    border:1px solid #dcfce7;
+}
+
+.timeline-card img{
+    width:100%;
+    max-height:250px;
+    object-fit:cover;
+    border-radius:1rem;
+    margin:1rem 0;
+}
+
+.timeline-date{
+    color:#64748b;
+}
+
+.timeline-health{
+    font-size:2rem;
+    color:#166534;
+}
+
+.timeline-info{
+    display:flex;
+    gap:1rem;
+    margin-top:1rem;
+}
+
+.back-link{
+    display:inline-flex;
+    margin-bottom:1.5rem;
+    text-decoration:none;
+    color:#15803d;
+    font-weight:600;
+}
+
+.back-link:hover{
+    text-decoration:underline;
+}
+
+/* HEALTH CHART */
+
+.health-chart-card{
+    background:white;
+    border:1px solid #dcfce7;
+    border-radius:1.2rem;
+    padding:1.5rem;
+    margin-bottom:2rem;
+}
+
+.health-chart-card h2{
+    margin-bottom:1rem;
+    color:#14532d;
+}
+
+.simple-health-chart{
+    height:12rem;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:2rem;
+    padding-top:1rem;
+}
+
+.health-chart-point{
+    width:4rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.7rem;
+}
+
+.health-bar-wrap{
+    width:2rem;
+    height:9rem;
+    border-radius:999px;
+    background:#dcfce7;
+    display:flex;
+    align-items:flex-end;
+    overflow:hidden;
+}
+
+.health-bar{
+    width:100%;
+    border-radius:999px;
+    background:#22c55e;
+    transition:.3s ease;
+}
+
+.health-chart-point span{
+    font-size:.9rem;
+    font-weight:700;
+    color:#166534;
+}
+
+.health-chart-label{
+    text-align: center;
+}
+
+.health-chart-label small{
+    display: block;
+    margin-top: 2rem;
+    color: #64748b;
+}
+
+/* SETTINGS */
 
 .settings-page{
     width:min(90%,50rem);
@@ -1569,6 +1775,7 @@ button:disabled{
 
 @media(min-width:769px){
     body:has(.journey-page) .conversation-sidebar,
+    body:has(.journey-detail-page) .conversation-sidebar,
     body:has(.settings-page) .conversation-sidebar{
         display:none;
     }
